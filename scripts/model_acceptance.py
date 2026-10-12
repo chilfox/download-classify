@@ -9,6 +9,8 @@ import os
 from pathlib import Path
 import platform
 import statistics
+import sys
+import tempfile
 import time
 
 # No network requests, including telemetry, during document processing.
@@ -16,6 +18,7 @@ os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 MODEL_ID = "fastino/gliner2-multi-v1"
 REVISION = "ce747d79a8e362d3dee0b0b26d1201f7f1a8615a"
 MIN_SCORE = 0.80
@@ -39,6 +42,7 @@ def main() -> None:
     }
     try:
         from gliner2 import GLiNER2
+        from backend.model_input import prepare_input, read_opening
         started = time.perf_counter()
         model = GLiNER2.from_pretrained(MODEL_ID, revision=REVISION, local_files_only=True).to("cpu").eval()
         report["load_seconds"] = time.perf_counter() - started
@@ -53,20 +57,12 @@ def main() -> None:
             "selected_encoded_token_budget": limit,
             "budget_note": "512 is the conservative configured context budget, not a hard architectural ceiling for relative attention.",
             "max_bytes": MAX_BYTES,
-            "policy": "No truncation or sampling. Reject over-budget input before inference. User policy pending.",
+            "policy": "User approved opening excerpts, including automatic movement/NeedsReview. Read at most 64 KiB; fit complete schema plus Unicode opening to 512 encoded tokens. Never modify source bytes. Disclose truncation; long-file quality unvalidated.",
         }
         for sample in manifest["samples"]:
-            with (ROOT / "fixtures/model-acceptance" / sample["file"]).open("rb") as source:
-                data = source.read(MAX_BYTES + 1)
-            if len(data) > MAX_BYTES:
-                raise ValueError("Acceptance fixture exceeds read budget")
-            text = data.decode("utf-8")
-            # The public processor includes category descriptions, special tokens,
-            # classification prefix and document subwords in this exact count.
-            batch = model.processor.collate_fn_inference([(text, schema.build())], max_len=None)
-            count = batch.input_ids.shape[1]
-            if count > limit:
-                raise ValueError(f"Acceptance fixture exceeds encoder budget: {count} > {limit}")
+            opening = read_opening(ROOT / "fixtures/model-acceptance" / sample["file"])
+            prepared = prepare_input(model.processor, schema, opening)
+            text, count = prepared.text, prepared.encoded_tokens
             started = time.perf_counter()
             output = model.extract(text, schema, include_confidence=True, max_len=None)
             elapsed = time.perf_counter() - started
@@ -78,7 +74,8 @@ def main() -> None:
             gap = ranked[0][1] - ranked[1][1] if len(ranked) > 1 else None
             clear = ranked[0][1] >= MIN_SCORE and (gap is None or gap >= MIN_GAP)
             report["results"].append({
-                **sample, "input_bytes": len(data), "encoded_tokens": count,
+                **sample, "input_bytes": opening.read_bytes, "encoded_tokens": count,
+                "truncated": prepared.truncated,
                 "scores": scores, "prediction": ranked[0][0], "top_two_gap": gap,
                 "correct": ranked[0][0] == sample["expected"],
                 "would_move": clear, "inference_seconds": elapsed,
@@ -99,6 +96,37 @@ def main() -> None:
             "output": probe_output, "inference_seconds": time.perf_counter() - started,
             "note": "Synthetic non-moving probe only; success does not validate long-document quality.",
         }
+        excerpt_probes = []
+        with tempfile.TemporaryDirectory() as directory:
+            for language, content in {
+                "English": ("Invoice payment due. " * 10000).encode("utf-8"),
+                "Traditional Chinese": ("發票付款期限。" * 10000).encode("utf-8"),
+            }.items():
+                path = Path(directory) / "disposable.txt"
+                path.write_bytes(content)
+                opening = read_opening(path)
+                prepared = prepare_input(model.processor, schema, opening)
+                actual = model.processor.collate_fn_inference([(prepared.text, schema.build())], max_len=None).input_ids.shape[1]
+                assert 0 < actual <= 512
+                assert actual == prepared.encoded_tokens
+                assert prepared.truncated and opening.read_truncated
+                assert content.decode("utf-8").startswith(prepared.text)
+                assert path.read_bytes() == content
+                output = model.extract(prepared.text, schema, include_confidence=True, max_len=None)
+                excerpt_probes.append({"language": language, "source_bytes": len(content),
+                    "read_bytes": opening.read_bytes, "excerpt_characters": len(prepared.text),
+                    "encoded_tokens": actual, "truncated": prepared.truncated, "output": output})
+            # Category-only prompts must fail before inference, not lose labels.
+            oversized = model.create_schema().classification("document_topic", {
+                "Invoice": "Billing description " * 1000,
+            }, multi_label=True, cls_threshold=0.0, class_act="sigmoid")
+            try:
+                prepare_input(model.processor, oversized, opening)
+            except ValueError as exc:
+                report["schema_over_budget_probe"] = str(exc)
+            else:
+                raise AssertionError("Oversized schema was not rejected")
+        report["excerpt_probes"] = excerpt_probes
         results = report["results"]
         clear_results = [r for r in results if r["would_move"]]
         latencies = [r["inference_seconds"] for r in results]
@@ -110,7 +138,7 @@ def main() -> None:
             "max_inference_seconds": max(latencies),
         }
         report["recommended_mode"] = (
-            "automatic for complete bounded inputs only, pending user input-policy approval"
+            "automatic demo with disclosed opening excerpts; long-document quality unvalidated"
             if report["summary"]["correct"] >= 10 and clear_results and all(r["correct"] for r in clear_results)
             else "suggestions-only"
         )
