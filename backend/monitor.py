@@ -149,8 +149,8 @@ class Monitor:
         try:
             if path.is_symlink() or self.signature(path) != signature:
                 return
-            if path.suffix.lower() not in {".txt", ".md", ".markdown"}:
-                result.update(outcome="skipped", reason="Unsupported format. Only TXT and Markdown are supported; all PDFs stay untouched.")
+            if path.suffix.lower() not in {".txt", ".md", ".markdown", ".pdf"}:
+                result.update(outcome="skipped", reason="Unsupported format. Only TXT, Markdown, and text-based PDF are supported.")
             else:
                 categories = self.categories()
                 if not categories:

@@ -14,7 +14,7 @@ uv run --extra model-check python scripts/model_acceptance.py \
   --output /tmp/model-acceptance-results.json
 ```
 
-The smoke checks loading and basic inference, not classification quality. The non-moving acceptance script runs the labeled English/Traditional Chinese TXT/Markdown fixtures in `fixtures/model-acceptance/`, records all candidate scores, token counts, accuracy, threshold eligibility and latency, and checks bounded excerpts with large inputs. Ordinary tests replace only the model boundary and do not establish model quality.
+The smoke checks loading and basic inference, not classification quality. The non-moving acceptance script runs the labeled English/Traditional Chinese TXT/Markdown fixtures in `fixtures/model-acceptance/`, records all candidate scores, token counts, accuracy, threshold eligibility and latency, and checks bounded excerpts with large inputs. Validate PDF extraction plus real-model input independently with `uv run --extra model-check python scripts/pdf_smoke.py` (uses its default disposable fixture). Ordinary tests replace only the model boundary and do not establish model quality.
 
 The checkpoint is `fastino/gliner2-multi-v1`, revision `ce747d79a8e362d3dee0b0b26d1201f7f1a8615a`. Acceptance runs serially on CPU, using cached weights with HF offline mode and telemetry disabled. No document contents or filenames are sent to cloud services. Missing weights or loading/inference failures must be reported as failures, not fabricated suggestions.
 
@@ -26,9 +26,9 @@ Use GLiNER2 multi-label classification with `cls_threshold=0.0`, `class_act="sig
 
 ## Bounded input policy
 
-`backend/model_input.py` reads a bounded opening of at most 64 KiB plus one detection byte and fits a Unicode-safe opening excerpt to **512 encoded tokens including the captured schema, prefix and special tokens**. Use the prepared text with that same schema and `max_len=None`; do not assume a 512-word cap or tokenizer sentinel bounds actual encoder tokens.
+For TXT/Markdown, `backend/model_input.py` reads at most 64 KiB plus one detection byte. PDF extraction uses local `pypdf` (`>=6.20,<7`), considers at most 20 pages, retains at most 64 KiB UTF-8 extracted text, and bounds the source to 10 MiB, each decoded stream to 1 MiB, and combined page content to 1 MiB. Resource-limit violations fail; reaching the page or text prefix produces partial text marked truncated. No text within limits does not prove unread pages are blank. Extraction has no hard time or memory guarantee. Both paths fit a Unicode-safe excerpt to **512 encoded tokens including the captured schema, prefix and special tokens**. Use the prepared text with that same schema and `max_len=None`; do not assume a 512-word cap or tokenizer sentinel bounds actual encoder tokens.
 
-The user approved automatic topic/NeedsReview movement based on excerpts at the same thresholds. Original contents must not change; results disclose truncation. Long-document classification quality remains unvalidated. Opening UTF-8 errors, unusable text and schemas that alone exceed the budget fail explicitly. Unread file tails are not validated. The 512-token budget is a conservative configured context budget, not a claim of a hard architectural ceiling.
+The user approved automatic topic/NeedsReview movement based on excerpts at the same thresholds. Original contents must not change; results disclose truncation. Long-document classification quality remains unvalidated. TXT/Markdown opening UTF-8 errors, PDF extraction errors or unusable text, and schemas that alone exceed the budget fail explicitly. Unread file tails/pages are not validated. PDF reading order and font mappings may be imperfect; scanned/image-only PDFs are not OCRed. The 512-token budget is a conservative configured context budget, not a claim of a hard architectural ceiling.
 
 ## Evidence and limitations
 

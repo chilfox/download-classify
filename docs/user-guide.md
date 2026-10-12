@@ -4,7 +4,7 @@ This guide explains how to configure categories, monitor a dedicated folder, and
 
 ## Before you begin
 
-Download Classify is a local macOS application for new TXT and Markdown documents. It uses a local GLiNER2 model and does not send document contents or filenames to cloud services.
+Download Classify is a local macOS application for new TXT, Markdown, and text-based PDF documents. PDF text extraction and classification use local software; document contents and filenames are not sent to cloud services. PDF support uses `pypdf` (version `>=6.20,<7`) without OCR.
 
 Use a dedicated folder containing disposable test files. Automatic mode is enabled by default and moves files after classification. The app never deletes or overwrites documents, but it has no undo or automatic restoration. Do not point it at your real Downloads folder or files you are actively editing.
 
@@ -25,7 +25,7 @@ Settings are saved locally. By default, they are stored at `~/.download-classify
 1. Make sure the configured folder exists and is the dedicated test folder you intend to use.
 2. Select **Start monitoring** in the dashboard.
 3. Wait for the local model to load and show its ready state.
-4. Add a new TXT or Markdown document directly into the monitored folder.
+4. Add a new TXT, Markdown, or text-based PDF document directly into the monitored folder.
 5. Review its result in the dashboard and inspect the destination folder when it is moved.
 6. Select **Stop monitoring** when done.
 
@@ -37,8 +37,8 @@ The monitor processes files serially. Stop prevents new attempts, but an active 
 
 - **Topic name / `moved`:** The model selected a topic and the file was moved into that topic's folder.
 - **`NeedsReview`:** The result was uncertain and, in automatic mode, the file was moved into `NeedsReview`. Review it manually in Finder.
-- **`skipped`:** The file format is unsupported and the file was left untouched. Only `.txt`, `.md`, and `.markdown` files are supported. PDFs and other formats are not processed.
-- **`failed`:** Processing failed. The source is left untouched. The result includes an explanation where available.
+- **`skipped`:** The file format is unsupported and the file was left untouched. Supported extensions are `.txt`, `.md`, `.markdown`, and `.pdf` (extension matching is case-insensitive).
+- **`failed`:** Processing failed. The source is left untouched. The result includes an explanation where available. For PDFs, encrypted, malformed, or textless files fail rather than being classified; no password prompt or OCR is provided.
 - **Movement trace:** Successful moves are recorded locally as JSON Lines beside the settings file by default. A recording error is shown separately; it does not undo a completed move.
 
 The dashboard shows current-process results only. Results do not persist after the backend restarts. There is no history API or retry button. Unchanged files, including failed attempts, are not repeatedly processed during the same monitoring run.
@@ -47,7 +47,7 @@ The dashboard shows current-process results only. Results do not persist after t
 
 Scores are independent model scores, not probabilities that a classification is correct. A topic is considered clear when the top score is at least `0.65` and, when there is a second candidate, the gap between the top two scores is at least `0.10`. A single-category setup still requires a score of at least `0.65`.
 
-The model considers a bounded opening excerpt, not necessarily the whole document. The dashboard discloses when the text was truncated. Quality on long documents has not been validated. Do not interpret a high score as a guarantee.
+The model considers a bounded opening excerpt, not necessarily the whole document. For PDFs, extraction examines at most the first 20 pages and retains at most 64 KiB of UTF-8 text. A source larger than 10 MiB, a decoded stream larger than 1 MiB, or combined page content larger than 1 MiB exceeds parsing limits and fails untouched. Reaching the page or text prefix limit stops extraction and is disclosed as truncation; if no text is found within limits, unread pages may still contain text. No hard time or memory guarantee is made. PDF reading order and font mappings may be imperfect, especially for complex layouts. The dashboard discloses when the text was truncated. Quality on long documents has not been validated. Do not interpret a high score as a guarantee. A classified PDF moves as the original PDF; no `.txt` copy is created.
 
 ## Suggestions-only mode
 

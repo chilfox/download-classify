@@ -2,7 +2,7 @@
 
 Download Classify is a small local app that keeps downloaded documents organized by topic rather than file extension. Development and acceptance take place on the current macOS MacBook. Users define categories with names and descriptions in a local web dashboard. A local GLiNER2 multilingual model reads newly arriving documents and moves them into category folders. Uncertain classifications go to `NeedsReview`; unsupported files and processing failures stay untouched.
 
-Use disposable documents in a dedicated test folder for demos. Support TXT and Markdown only. Keep document contents local, never delete or overwrite files, and avoid adding features beyond the agreed scope.
+Use disposable documents in a dedicated test folder for demos. Support TXT, Markdown, and text-only PDF. PDF extraction is local, in memory, and has no OCR; preserve document contents locally, never delete or overwrite files, and avoid adding features beyond the agreed scope.
 
 The stack is React + TypeScript + Vite for the frontend and Python + FastAPI for the backend.
 

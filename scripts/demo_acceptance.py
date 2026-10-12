@@ -71,7 +71,7 @@ def main():
                 content = (ROOT / "fixtures/model-acceptance" / sample["file"]).read_bytes()
                 originals[sample["file"]] = content
                 (inbox / sample["file"]).write_bytes(content)
-            unsupported = {"unsupported.pdf": b"%PDF disposable unsupported", "unsupported.zip": b"PK disposable"}
+            unsupported = {"unsupported.zip": b"PK disposable", "unsupported.bin": b"disposable binary"}
             for name, content in unsupported.items():
                 (inbox / name).write_bytes(content)
             rows = wait_for(client, "/results", lambda rows: len(rows) == 14)

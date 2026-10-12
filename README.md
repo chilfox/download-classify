@@ -1,6 +1,6 @@
 # Download Classify
 
-Download Classify is a local app that organizes new TXT and Markdown documents by topic. Define topic categories in the web dashboard, then let a local GLiNER2 model classify new files in a folder you choose.
+Download Classify is a local app that organizes new TXT, Markdown, and text-based PDF documents by topic. Define topic categories in the web dashboard, then let a local GLiNER2 model classify new files in a folder you choose.
 
 Clear classifications move into their topic folders. Uncertain classifications move to `NeedsReview`. Unsupported files and processing failures stay where they are.
 

@@ -170,14 +170,16 @@ def test_unsupported_unusable_and_inference_errors_are_explicit_and_preserve_byt
         def classify(self, opening, categories):
             raise RuntimeError("Inference unavailable")
 
-    originals = {"paper.pdf": b"%PDF text", "binary.txt": b"\xff", "empty.md": b" \n", "valid.txt": b"Valid text"}
+    originals = {"paper.pdf": b"%PDF text", "archive.zip": b"PK unsupported", "binary.txt": b"\xff", "empty.md": b" \n", "valid.txt": b"Valid text"}
     with TestClient(create_app(tmp_path / "settings.json", tmp_path, FailingModel(), poll_interval=0.01)) as client:
         client.post("/monitor/start")
         for name, content in originals.items():
             (tmp_path / name).write_bytes(content)
-        rows = wait_for(client, lambda rows: len(rows) == 4)
+        rows = wait_for(client, lambda rows: len(rows) == 5)
         by_name = {row["filename"]: row for row in rows}
-        assert by_name["paper.pdf"]["outcome"] == "skipped"
+        assert by_name["paper.pdf"]["outcome"] == "failed"
+        assert "PDF text extraction failed" in by_name["paper.pdf"]["reason"]
+        assert by_name["archive.zip"]["outcome"] == "skipped"
         assert "UTF-8" in by_name["empty.md"]["reason"]
         assert "decode" in by_name["binary.txt"]["reason"]
         assert "Inference unavailable" in by_name["valid.txt"]["reason"]

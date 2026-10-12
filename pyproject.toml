@@ -5,6 +5,7 @@ description = "Minimal local API baseline"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi>=0.115,<1",
+    "pypdf>=6.20.0,<7",
     "uvicorn[standard]>=0.34,<1",
 ]
 

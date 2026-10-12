@@ -71,7 +71,7 @@ export function Monitoring() {
 
   return <section className="monitoring" aria-labelledby="monitoring-title">
     <div className="section-heading"><h2 id="monitoring-title">Monitoring</h2><p>{status?.mode === 'automatic' ? 'Automatic mode: clear results move to a topic folder; uncertain results move to NeedsReview. File contents are never modified.' : status?.mode === 'suggestions-only' ? 'Suggestions-only fallback. No files are moved, deleted, or modified.' : 'Operating mode will appear when connected.'}</p></div>
-    <p className="notice">Use disposable documents in a dedicated demo folder. Only new root-level TXT and Markdown files are classified. Existing files, nested files, symlinks, and temporary downloads are excluded.</p>
+    <p className="notice">Use disposable documents in a dedicated demo folder. Only new root-level TXT, Markdown, and text-based PDF files are classified. PDFs use local text extraction only (no OCR) and have size, page, and text limits. Existing files, nested files, symlinks, and temporary downloads are excluded.</p>
     {!status && !connectionError && <p role="status">Loading monitoring status…</p>}
     {status && <>
       <dl className="monitor-details">
@@ -92,7 +92,7 @@ export function Monitoring() {
     {connectionError && <p className="status error" role="alert">{connectionError}</p>}
     {actionError && <p className="status error" role="alert">{actionError}</p>}
     <div className="section-heading results-heading"><h2>Current-run results ({results.length})</h2><p>Model scores are independent sigmoid scores, not probabilities of correctness. Fixed thresholds: score 0.65, top-two gap 0.10.</p></div>
-    {!results.length && <p className="notice">No results yet. Start monitoring, then add a new document. All PDFs are unsupported and stay untouched.</p>}
+    {!results.length && <p className="notice">No results yet. Start monitoring, then add a new document. Scanned, encrypted, malformed, or textless PDFs fail and stay untouched.</p>}
     <ol className="results">{results.map((result, index) => <li key={index}>
       <div className="result-heading"><strong>{result.filename}</strong><span className={`badge ${result.outcome === 'failed' ? 'failure' : ''}`}>{result.outcome}</span></div>
       {result.suggestion && <p>Classification: <strong>{result.suggestion}</strong></p>}

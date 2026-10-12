@@ -11,6 +11,7 @@ uv sync --extra model-check --extra test --python 3.12
 (cd frontend && npm ci)
 # Initial weight download is permitted during setup.
 uv run --extra model-check python scripts/model_smoke.py
+uv run --extra model-check python scripts/pdf_smoke.py
 uv run --extra model-check --extra test python scripts/demo_acceptance.py \
   --output /tmp/download-classify-demo-results.json
 uv lock --check
@@ -24,7 +25,7 @@ The macOS-only driver uses FastAPI TestClient with the real application lifespan
 
 - Report top-topic prediction accuracy and automatic topic-movement coverage separately. Verify uncertain classification reaches NeedsReview, not a forced topic.
 - Supported files sharing an extension can reach different topic folders. Verify original bytes after every move, collision preservation, and original/destination/time/result JSONL records.
-- Unsupported PDF/ZIP files remain untouched with explanatory results. Suggestions-only results must leave sources untouched and create no movement records.
+- Unsupported formats such as ZIP remain untouched with explanatory results. Verify valid text-based PDFs reach the real model through the independent PDF smoke check, and PDF extraction failures leave originals untouched. Suggestions-only results must leave sources untouched and create no movement records.
 - Existing-file and restart baselines, unchanged-file deduplication, exclusions, stability, source-change retry, captured settings, and stop-during-processing behavior are covered through the public API plus temporary filesystem tests. Timing-critical cases replace only the model boundary; they are not model-quality evidence.
 - Independently run [model validation](model-validation.md) for score/input-budget semantics and labeled model quality. API health and deterministic tests do not replace it.
 

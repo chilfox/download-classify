@@ -66,7 +66,13 @@ uv sync --extra model-check --python 3.12
 uv run --extra model-check --python 3.12 python scripts/model_smoke.py
 ```
 
-The smoke check verifies model loading and basic inference only. For labeled fixture evaluation without movement:
+The smoke check verifies model loading and basic inference only. For PDF extraction and real-model input verification, run the PDF smoke check using its default disposable fixture:
+
+```sh
+uv run --extra model-check python scripts/pdf_smoke.py
+```
+
+For labeled fixture evaluation without movement:
 
 ```sh
 uv run --extra model-check --python 3.12 python scripts/model_acceptance.py \

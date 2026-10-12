@@ -15,7 +15,7 @@ Download Classify is a local web application with a React + TypeScript + Vite fr
 1. Starting monitoring verifies that the configured folder exists and is not a symlink. The monitor captures the folder identity and names already present as a baseline.
 2. Subsequent scans consider new regular root-level files. Temporary download entries, symlinks, subdirectories, and the configured movement trace are excluded.
 3. A file is eligible after its size and modification time remain unchanged across consecutive scans. This is a completion heuristic, not a transactional guarantee.
-4. For supported files (`.txt`, `.md`, `.markdown`), the monitor captures the current categories, reads a bounded opening, and asks the loaded model for a score for each category.
+4. For supported files (`.txt`, `.md`, `.markdown`, `.pdf`, case-insensitive), the monitor captures the current categories and reads a bounded opening. PDFs are parsed locally in memory with `pypdf` (`>=6.20,<7`); the resulting text is passed through the existing model-input and scoring path.
 5. A top score of at least `0.65` and a top-two gap of at least `0.10` define a clear result. A single category requires the same minimum score but has no runner-up gap. Scores are independent sigmoid scores, not calibrated correctness probabilities.
 6. Automatic mode moves clear results to the selected topic and uncertain results to `NeedsReview`. Suggestions-only mode leaves all sources untouched. Unsupported files and processing failures also remain untouched.
 7. Successful moves are recorded in a local JSONL trace. A trace failure is reported independently and does not reverse the move.
@@ -26,7 +26,7 @@ The worker is serial and runs in one backend process. The app is not designed fo
 
 Movement is macOS-only and uses an exclusive, descriptor-relative rename that refuses existing destinations. Collisions receive numbered filenames; the app has no overwrite-capable fallback. It verifies source and directory identities around movement and rejects symlink paths. These safeguards do not make monitoring transactional against hostile local writers or directory relocation in the final system-call window.
 
-The model reads at most a 64 KiB opening and fits the complete prompt, schema, and special tokens within a 512-token budget. Truncation is disclosed. Long-document classification quality is unvalidated. Original file contents are not modified; the app does not delete files.
+TXT/Markdown reads are bounded to a 64 KiB opening. PDF extraction considers at most 20 pages and retains at most 64 KiB UTF-8 extracted text; sources over 10 MiB, decoded streams over 1 MiB, or combined page content over 1 MiB fail. Reaching page or text prefix limits yields disclosed partial text; no text within limits means unread pages may still contain text. There is no hard time or memory guarantee. The complete prompt, schema, and special tokens remain within the existing 512-token budget. Truncation is disclosed. PDF reading order/font mappings can be imperfect, and long-document classification quality is unvalidated. PDFs use no OCR, and extraction creates no text files; movement preserves the original PDF. Original file contents are not modified; the app does not delete files.
 
 Monitoring results are in-memory for the lifetime of the backend process. The movement trace is a record of successful moves, not an undo mechanism or result-history API.
 
