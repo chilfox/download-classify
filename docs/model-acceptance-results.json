@@ -1,0 +1,368 @@
+{
+  "model": "fastino/gliner2-multi-v1",
+  "revision": "ce747d79a8e362d3dee0b0b26d1201f7f1a8615a",
+  "device": "cpu",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "versions": {
+    "gliner2": "2.1.0",
+    "torch": "2.14.1",
+    "transformers": "5.19.0"
+  },
+  "thresholds": {
+    "minimum_score": 0.8,
+    "minimum_gap": 0.2
+  },
+  "score_semantics": "Independent sigmoid logits, temperature 1; not calibrated probabilities; do not sum to one.",
+  "categories": {
+    "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+    "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+    "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+    "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+  },
+  "results": [
+    {
+      "file": "01.txt",
+      "language": "en",
+      "expected": "Invoice",
+      "input_bytes": 269,
+      "encoded_tokens": 241,
+      "truncated": false,
+      "scores": {
+        "Invoice": 0.9865717887878418,
+        "Academic research": 0.5715404748916626,
+        "Travel itinerary": 3.714334297910682e-06,
+        "Medical report": 0.002912950934842229
+      },
+      "prediction": "Invoice",
+      "top_two_gap": 0.4150313138961792,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.08767320800689049
+    },
+    {
+      "file": "02.md",
+      "language": "en",
+      "expected": "Academic research",
+      "input_bytes": 399,
+      "encoded_tokens": 256,
+      "truncated": false,
+      "scores": {
+        "Invoice": 1.0244630175293423e-05,
+        "Academic research": 0.9632474184036255,
+        "Travel itinerary": 1.3805894923279993e-05,
+        "Medical report": 1.8147064110962674e-05
+      },
+      "prediction": "Academic research",
+      "top_two_gap": 0.9632292713395145,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.0744260409992421
+    },
+    {
+      "file": "03.txt",
+      "language": "en",
+      "expected": "Travel itinerary",
+      "input_bytes": 304,
+      "encoded_tokens": 261,
+      "truncated": false,
+      "scores": {
+        "Invoice": 0.00196128711104393,
+        "Academic research": 2.6991840059054084e-05,
+        "Travel itinerary": 0.9964079260826111,
+        "Medical report": 2.4269738787552342e-05
+      },
+      "prediction": "Travel itinerary",
+      "top_two_gap": 0.9944466389715672,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.07673783299105708
+    },
+    {
+      "file": "04.md",
+      "language": "en",
+      "expected": "Medical report",
+      "input_bytes": 359,
+      "encoded_tokens": 252,
+      "truncated": false,
+      "scores": {
+        "Invoice": 4.057963451487012e-05,
+        "Academic research": 2.0668076103902422e-05,
+        "Travel itinerary": 1.7474805645179003e-05,
+        "Medical report": 0.9971916079521179
+      },
+      "prediction": "Medical report",
+      "top_two_gap": 0.997151028317603,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.07114512500993442
+    },
+    {
+      "file": "05.md",
+      "language": "zh-Hant",
+      "expected": "Invoice",
+      "input_bytes": 307,
+      "encoded_tokens": 278,
+      "truncated": false,
+      "scores": {
+        "Invoice": 0.8651123642921448,
+        "Academic research": 6.071776624594349e-06,
+        "Travel itinerary": 1.4553593246091623e-05,
+        "Medical report": 1.4871036000840832e-05
+      },
+      "prediction": "Invoice",
+      "top_two_gap": 0.8650974932561439,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.07816087499668356
+    },
+    {
+      "file": "06.txt",
+      "language": "zh-Hant",
+      "expected": "Academic research",
+      "input_bytes": 331,
+      "encoded_tokens": 269,
+      "truncated": false,
+      "scores": {
+        "Invoice": 2.1411986381281167e-05,
+        "Academic research": 0.9182820916175842,
+        "Travel itinerary": 3.3932243240997195e-05,
+        "Medical report": 6.559542816830799e-05
+      },
+      "prediction": "Academic research",
+      "top_two_gap": 0.9182164961894159,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.07724241699906997
+    },
+    {
+      "file": "07.md",
+      "language": "zh-Hant",
+      "expected": "Travel itinerary",
+      "input_bytes": 331,
+      "encoded_tokens": 277,
+      "truncated": false,
+      "scores": {
+        "Invoice": 0.051698941737413406,
+        "Academic research": 4.287034971639514e-05,
+        "Travel itinerary": 0.9925998449325562,
+        "Medical report": 0.0013066373066976666
+      },
+      "prediction": "Travel itinerary",
+      "top_two_gap": 0.9409009031951427,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.07719475000340026
+    },
+    {
+      "file": "08.txt",
+      "language": "zh-Hant",
+      "expected": "Medical report",
+      "input_bytes": 298,
+      "encoded_tokens": 267,
+      "truncated": false,
+      "scores": {
+        "Invoice": 4.0483548218617216e-05,
+        "Academic research": 8.53517121868208e-05,
+        "Travel itinerary": 1.0235255103907548e-05,
+        "Medical report": 0.9920163154602051
+      },
+      "prediction": "Medical report",
+      "top_two_gap": 0.9919309637480183,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.07750670799578074
+    },
+    {
+      "file": "09.txt",
+      "language": "en",
+      "expected": "Invoice",
+      "input_bytes": 322,
+      "encoded_tokens": 250,
+      "truncated": false,
+      "scores": {
+        "Invoice": 0.9653483629226685,
+        "Academic research": 1.6044739822973497e-05,
+        "Travel itinerary": 0.061743367463350296,
+        "Medical report": 2.264901195303537e-05
+      },
+      "prediction": "Invoice",
+      "top_two_gap": 0.9036049954593182,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.07207720799488015
+    },
+    {
+      "file": "10.md",
+      "language": "en",
+      "expected": "Academic research",
+      "input_bytes": 404,
+      "encoded_tokens": 266,
+      "truncated": false,
+      "scores": {
+        "Invoice": 4.450060805538669e-05,
+        "Academic research": 0.27428409457206726,
+        "Travel itinerary": 1.3954132555227261e-05,
+        "Medical report": 0.4217281937599182
+      },
+      "prediction": "Medical report",
+      "top_two_gap": 0.14744409918785095,
+      "correct": false,
+      "would_move": false,
+      "inference_seconds": 0.0770971249876311
+    },
+    {
+      "file": "11.txt",
+      "language": "zh-Hant",
+      "expected": "Travel itinerary",
+      "input_bytes": 307,
+      "encoded_tokens": 264,
+      "truncated": false,
+      "scores": {
+        "Invoice": 0.0010191701585426927,
+        "Academic research": 2.213934567407705e-05,
+        "Travel itinerary": 0.9014192223548889,
+        "Medical report": 3.9781167288310826e-05
+      },
+      "prediction": "Travel itinerary",
+      "top_two_gap": 0.9004000521963462,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.07693383400328457
+    },
+    {
+      "file": "12.md",
+      "language": "zh-Hant",
+      "expected": "Medical report",
+      "input_bytes": 328,
+      "encoded_tokens": 280,
+      "truncated": false,
+      "scores": {
+        "Invoice": 3.268053842475638e-05,
+        "Academic research": 1.2981699910596944e-05,
+        "Travel itinerary": 2.4563052647863515e-05,
+        "Medical report": 0.9759069085121155
+      },
+      "prediction": "Medical report",
+      "top_two_gap": 0.9758742279736907,
+      "correct": true,
+      "would_move": true,
+      "inference_seconds": 0.07799833398894407
+    }
+  ],
+  "movement_enabled": false,
+  "load_seconds": 3.1732324159966083,
+  "input_limits": {
+    "tokenizer_model_max_length": 1000000000000000019884624838656,
+    "encoder_max_position_embeddings": 512,
+    "selected_encoded_token_budget": 512,
+    "budget_note": "512 is the conservative configured context budget, not a hard architectural ceiling for relative attention.",
+    "max_bytes": 65536,
+    "policy": "User approved opening excerpts, including automatic movement/NeedsReview. Read at most 64 KiB; fit complete schema plus Unicode opening to 512 encoded tokens. Never modify source bytes. Disclose truncation; long-file quality unvalidated."
+  },
+  "overlong_probes": {
+    "English": {
+      "characters": 21000,
+      "full_encoded_tokens": 7168,
+      "word_cap_512_encoded_tokens": 1062
+    },
+    "Traditional Chinese": {
+      "characters": 7000,
+      "full_encoded_tokens": 7168,
+      "word_cap_512_encoded_tokens": 1958
+    }
+  },
+  "above_configured_context_probe": {
+    "encoded_tokens": 868,
+    "output": {
+      "document_topic": [
+        {
+          "label": "Invoice",
+          "confidence": 0.9640495777130127
+        },
+        {
+          "label": "Academic research",
+          "confidence": 0.012141220271587372
+        },
+        {
+          "label": "Travel itinerary",
+          "confidence": 0.004602148197591305
+        },
+        {
+          "label": "Medical report",
+          "confidence": 0.015681952238082886
+        }
+      ]
+    },
+    "inference_seconds": 0.2679692910023732,
+    "note": "Synthetic non-moving probe only; success does not validate long-document quality."
+  },
+  "schema_over_budget_probe": "Category schema alone exceeds the 512 encoded-token input budget",
+  "excerpt_probes": [
+    {
+      "language": "English",
+      "source_bytes": 210000,
+      "read_bytes": 65536,
+      "excerpt_characters": 1029,
+      "encoded_tokens": 511,
+      "truncated": true,
+      "output": {
+        "document_topic": [
+          {
+            "label": "Invoice",
+            "confidence": 0.9812859296798706
+          },
+          {
+            "label": "Academic research",
+            "confidence": 0.005120237357914448
+          },
+          {
+            "label": "Travel itinerary",
+            "confidence": 0.001751890406012535
+          },
+          {
+            "label": "Medical report",
+            "confidence": 0.004178500268608332
+          }
+        ]
+      }
+    },
+    {
+      "language": "Traditional Chinese",
+      "source_bytes": 210000,
+      "read_bytes": 65536,
+      "excerpt_characters": 343,
+      "encoded_tokens": 511,
+      "truncated": true,
+      "output": {
+        "document_topic": [
+          {
+            "label": "Invoice",
+            "confidence": 0.6042158603668213
+          },
+          {
+            "label": "Academic research",
+            "confidence": 0.0018058900022879243
+          },
+          {
+            "label": "Travel itinerary",
+            "confidence": 0.003236594144254923
+          },
+          {
+            "label": "Medical report",
+            "confidence": 0.004732524510473013
+          }
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "correct": 11,
+    "total": 12,
+    "automatic_coverage_count": 11,
+    "automatic_correct_count": 11,
+    "median_inference_seconds": 0.07714593749551568,
+    "max_inference_seconds": 0.08767320800689049
+  },
+  "recommended_mode": "automatic demo with disclosed opening excerpts; long-document quality unvalidated"
+}

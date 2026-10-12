@@ -1,0 +1,22 @@
+{
+  "categories": {
+    "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+    "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+    "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+    "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+  },
+  "samples": [
+    {"file": "01.txt", "language": "en", "expected": "Invoice"},
+    {"file": "02.md", "language": "en", "expected": "Academic research"},
+    {"file": "03.txt", "language": "en", "expected": "Travel itinerary"},
+    {"file": "04.md", "language": "en", "expected": "Medical report"},
+    {"file": "05.md", "language": "zh-Hant", "expected": "Invoice"},
+    {"file": "06.txt", "language": "zh-Hant", "expected": "Academic research"},
+    {"file": "07.md", "language": "zh-Hant", "expected": "Travel itinerary"},
+    {"file": "08.txt", "language": "zh-Hant", "expected": "Medical report"},
+    {"file": "09.txt", "language": "en", "expected": "Invoice"},
+    {"file": "10.md", "language": "en", "expected": "Academic research"},
+    {"file": "11.txt", "language": "zh-Hant", "expected": "Travel itinerary"},
+    {"file": "12.md", "language": "zh-Hant", "expected": "Medical report"}
+  ]
+}

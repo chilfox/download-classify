@@ -40,4 +40,10 @@ uv sync --extra model-check --python 3.12
 uv run --extra model-check --python 3.12 python scripts/model_smoke.py
 ```
 
-The first model check downloads the real checkpoint; see `.scratch/mvp-readiness/spec.md` for the observed model outcome and limitations. Confidence values are not calibrated probabilities. This setup was exercised on the current macOS machine; clean-install reproducibility and Ubuntu compatibility are not claimed.
+The first model check downloads the real checkpoint; see `.scratch/mvp-readiness/spec.md` for the baseline observed model outcome and limitations. For the independent 12-document, non-moving acceptance run (requires cached weights):
+
+```sh
+uv run --extra model-check --python 3.12 python scripts/model_acceptance.py --output /tmp/model-acceptance-results.json
+```
+
+See [model acceptance](docs/model-acceptance.md) and the [recorded real results](docs/model-acceptance-results.json) for candidate-score semantics, thresholds, CPU latency, and the approved Unicode-safe opening-excerpt policy. The user authorized excerpt-based automatic topic/NeedsReview movement at the same thresholds, with visible truncation disclosure; long-document quality is unvalidated. `backend/model_input.py` bounds opening reads to 64 KiB and fits the complete prompt to 512 encoded tokens without modifying source contents. The acceptance run verifies this preparation offline and never moves documents. Confidence values are not calibrated probabilities. This setup was exercised on the current macOS machine; clean-install reproducibility and Ubuntu compatibility are not claimed.
