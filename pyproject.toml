@@ -1,0 +1,13 @@
+[project]
+name = "download-classify-readiness"
+version = "0.1.0"
+description = "Local GLiNER2 multilingual model feasibility smoke check"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "gliner2",
+    "torch",
+    "transformers",
+]
+
+[tool.uv]
+package = false
