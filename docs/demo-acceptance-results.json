@@ -1,0 +1,538 @@
+{
+  "model": "fastino/gliner2-multi-v1",
+  "revision": "ce747d79a8e362d3dee0b0b26d1201f7f1a8615a",
+  "device": "cpu",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "python": "3.12.11",
+  "versions": {
+    "gliner2": "2.1.0",
+    "torch": "2.14.1",
+    "transformers": "5.19.0"
+  },
+  "workspace": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197",
+  "seam": "Public backend API + disposable filesystem, real LocalModel",
+  "poll_interval_seconds": 1.0,
+  "movement_enabled": true,
+  "status": {
+    "folder": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox",
+    "monitoring": false,
+    "processing": null,
+    "model_status": "ready",
+    "model_error": null,
+    "monitor_error": null,
+    "movement_enabled": true,
+    "mode": "automatic"
+  },
+  "results": [
+    {
+      "file": "01.txt",
+      "language": "en",
+      "expected": "Invoice",
+      "filename": "01.txt",
+      "outcome": "moved",
+      "suggestion": "Invoice",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Invoice/01 (1).txt",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 0.9865717887878418,
+        "Academic research": 0.5715404748916626,
+        "Travel itinerary": 3.714334297910682e-06,
+        "Medical report": 0.002912950934842229
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 241,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.4150313138961792,
+      "prediction": "Invoice",
+      "correct": true,
+      "sha256": "31405da3e37af5667c6792471dc5b7635981c72dabdcf7e9c1c43a4e8482086f"
+    },
+    {
+      "file": "02.md",
+      "language": "en",
+      "expected": "Academic research",
+      "filename": "02.md",
+      "outcome": "moved",
+      "suggestion": "Academic research",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Academic research/02.md",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 1.0244630175293423e-05,
+        "Academic research": 0.9632474184036255,
+        "Travel itinerary": 1.3805894923279993e-05,
+        "Medical report": 1.8147064110962674e-05
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 256,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.9632292713395145,
+      "prediction": "Academic research",
+      "correct": true,
+      "sha256": "34752392b82e91520cbbbe3e5c71a52682bf21a7c6e73be63a45e9cd4f6ae963"
+    },
+    {
+      "file": "03.txt",
+      "language": "en",
+      "expected": "Travel itinerary",
+      "filename": "03.txt",
+      "outcome": "moved",
+      "suggestion": "Travel itinerary",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Travel itinerary/03.txt",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 0.00196128711104393,
+        "Academic research": 2.6991840059054084e-05,
+        "Travel itinerary": 0.9964079260826111,
+        "Medical report": 2.4269738787552342e-05
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 261,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.9944466389715672,
+      "prediction": "Travel itinerary",
+      "correct": true,
+      "sha256": "f06629a36ffaf917494bd0e2a19f6724b12759ec6adfc81c54553e1f817494b9"
+    },
+    {
+      "file": "04.md",
+      "language": "en",
+      "expected": "Medical report",
+      "filename": "04.md",
+      "outcome": "moved",
+      "suggestion": "Medical report",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Medical report/04.md",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 4.057963451487012e-05,
+        "Academic research": 2.0668076103902422e-05,
+        "Travel itinerary": 1.7474805645179003e-05,
+        "Medical report": 0.9971916079521179
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 252,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.997151028317603,
+      "prediction": "Medical report",
+      "correct": true,
+      "sha256": "7a4e63fa57c3f4ca36b5152c360fad326a070bf7bf9afc470cf98b3af3c83004"
+    },
+    {
+      "file": "05.md",
+      "language": "zh-Hant",
+      "expected": "Invoice",
+      "filename": "05.md",
+      "outcome": "moved",
+      "suggestion": "Invoice",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Invoice/05.md",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 0.8651123642921448,
+        "Academic research": 6.071776624594349e-06,
+        "Travel itinerary": 1.4553593246091623e-05,
+        "Medical report": 1.4871036000840832e-05
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 278,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.8650974932561439,
+      "prediction": "Invoice",
+      "correct": true,
+      "sha256": "23a95bb0432facbe82be612eac34bfcd0afb0a5cbf6d8d6b14e1b33d14b0fb1d"
+    },
+    {
+      "file": "06.txt",
+      "language": "zh-Hant",
+      "expected": "Academic research",
+      "filename": "06.txt",
+      "outcome": "moved",
+      "suggestion": "Academic research",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Academic research/06.txt",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 2.1411986381281167e-05,
+        "Academic research": 0.9182820916175842,
+        "Travel itinerary": 3.3932243240997195e-05,
+        "Medical report": 6.559542816830799e-05
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 269,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.9182164961894159,
+      "prediction": "Academic research",
+      "correct": true,
+      "sha256": "fd7c146502e59c2bff86416d3a1f2043910c4656e336ef688aea147f2566b58f"
+    },
+    {
+      "file": "07.md",
+      "language": "zh-Hant",
+      "expected": "Travel itinerary",
+      "filename": "07.md",
+      "outcome": "moved",
+      "suggestion": "Travel itinerary",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Travel itinerary/07.md",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 0.051698941737413406,
+        "Academic research": 4.287034971639514e-05,
+        "Travel itinerary": 0.9925998449325562,
+        "Medical report": 0.0013066373066976666
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 277,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.9409009031951427,
+      "prediction": "Travel itinerary",
+      "correct": true,
+      "sha256": "eb4b195fb23a60926c0e4d84b7a30d65d21c4c211b98835783fbe6e95c3664e8"
+    },
+    {
+      "file": "08.txt",
+      "language": "zh-Hant",
+      "expected": "Medical report",
+      "filename": "08.txt",
+      "outcome": "moved",
+      "suggestion": "Medical report",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Medical report/08.txt",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 4.0483548218617216e-05,
+        "Academic research": 8.53517121868208e-05,
+        "Travel itinerary": 1.0235255103907548e-05,
+        "Medical report": 0.9920163154602051
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 267,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.9919309637480183,
+      "prediction": "Medical report",
+      "correct": true,
+      "sha256": "1f8c22538ba91f1975ec756749230775e5e78a2906902966db1578194a3b09a4"
+    },
+    {
+      "file": "09.txt",
+      "language": "en",
+      "expected": "Invoice",
+      "filename": "09.txt",
+      "outcome": "moved",
+      "suggestion": "Invoice",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Invoice/09.txt",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 0.9653483629226685,
+        "Academic research": 1.6044739822973497e-05,
+        "Travel itinerary": 0.061743367463350296,
+        "Medical report": 2.264901195303537e-05
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 250,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.9036049954593182,
+      "prediction": "Invoice",
+      "correct": true,
+      "sha256": "e12309148c0ee0f4c7b77affa425f61f8f1294bc8dabdec6bf1fc9fda317130d"
+    },
+    {
+      "file": "10.md",
+      "language": "en",
+      "expected": "Academic research",
+      "filename": "10.md",
+      "outcome": "needs-review",
+      "suggestion": "NeedsReview",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/NeedsReview/10.md",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 4.450060805538669e-05,
+        "Academic research": 0.27428409457206726,
+        "Travel itinerary": 1.3954132555227261e-05,
+        "Medical report": 0.4217281937599182
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 266,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.14744409918785095,
+      "prediction": "Medical report",
+      "correct": false,
+      "sha256": "9b982f9fa56b995a60256c547ea5cd0190983dc8bffcf96c45ae836c218f55b9"
+    },
+    {
+      "file": "11.txt",
+      "language": "zh-Hant",
+      "expected": "Travel itinerary",
+      "filename": "11.txt",
+      "outcome": "moved",
+      "suggestion": "Travel itinerary",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Travel itinerary/11.txt",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 0.0010191701585426927,
+        "Academic research": 2.213934567407705e-05,
+        "Travel itinerary": 0.9014192223548889,
+        "Medical report": 3.9781167288310826e-05
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 264,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.9004000521963462,
+      "prediction": "Travel itinerary",
+      "correct": true,
+      "sha256": "fe6ee5d8844f82710a1b896c57dc479d0720bb46cb09acddb31143f88e077263"
+    },
+    {
+      "file": "12.md",
+      "language": "zh-Hant",
+      "expected": "Medical report",
+      "filename": "12.md",
+      "outcome": "moved",
+      "suggestion": "Medical report",
+      "mode": "automatic",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Medical report/12.md",
+      "recorded": true,
+      "recording_error": null,
+      "scores": {
+        "Invoice": 3.268053842475638e-05,
+        "Academic research": 1.2981699910596944e-05,
+        "Travel itinerary": 2.4563052647863515e-05,
+        "Medical report": 0.9759069085121155
+      },
+      "reason": "Original contents preserved.",
+      "truncated": false,
+      "encoded_tokens": 280,
+      "categories": {
+        "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+        "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+        "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+        "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+      },
+      "top_two_gap": 0.9758742279736907,
+      "prediction": "Medical report",
+      "correct": true,
+      "sha256": "34de610ff34bbbf42215b29c4dd2c49ad78614320af876a5662e3aceafb7c6cf"
+    }
+  ],
+  "unsupported_results": [
+    {
+      "filename": "unsupported.pdf",
+      "outcome": "skipped",
+      "suggestion": null,
+      "mode": "automatic",
+      "destination": null,
+      "recorded": null,
+      "recording_error": null,
+      "scores": null,
+      "reason": "Unsupported format. Only TXT and Markdown are supported; all PDFs stay untouched.",
+      "truncated": null,
+      "encoded_tokens": null,
+      "categories": null
+    },
+    {
+      "filename": "unsupported.zip",
+      "outcome": "skipped",
+      "suggestion": null,
+      "mode": "automatic",
+      "destination": null,
+      "recorded": null,
+      "recording_error": null,
+      "scores": null,
+      "reason": "Unsupported format. Only TXT and Markdown are supported; all PDFs stay untouched.",
+      "truncated": null,
+      "encoded_tokens": null,
+      "categories": null
+    }
+  ],
+  "movement_records": [
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/01.txt",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Invoice/01 (1).txt",
+      "time": "2026-10-12T06:56:51.903334+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/02.md",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Academic research/02.md",
+      "time": "2026-10-12T06:56:51.988475+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/03.txt",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Travel itinerary/03.txt",
+      "time": "2026-10-12T06:56:52.077716+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/04.md",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Medical report/04.md",
+      "time": "2026-10-12T06:56:52.162425+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/05.md",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Invoice/05.md",
+      "time": "2026-10-12T06:56:52.252407+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/06.txt",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Academic research/06.txt",
+      "time": "2026-10-12T06:56:52.339161+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/07.md",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Travel itinerary/07.md",
+      "time": "2026-10-12T06:56:52.426686+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/08.txt",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Medical report/08.txt",
+      "time": "2026-10-12T06:56:52.505104+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/09.txt",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Invoice/09.txt",
+      "time": "2026-10-12T06:56:52.579179+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/10.md",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/NeedsReview/10.md",
+      "time": "2026-10-12T06:56:52.659222+00:00",
+      "result": "needs-review"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/11.txt",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Travel itinerary/11.txt",
+      "time": "2026-10-12T06:56:52.739843+00:00",
+      "result": "moved"
+    },
+    {
+      "original": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/12.md",
+      "destination": "/private/var/folders/cg/v_lcg7gd1wl8pp0b64mg4jym0000gn/T/download-classify-acceptance-3ii0e197/inbox/Medical report/12.md",
+      "time": "2026-10-12T06:56:52.820441+00:00",
+      "result": "moved"
+    }
+  ],
+  "summary": {
+    "correct": 11,
+    "total": 12,
+    "automatic_topic_moves": 11,
+    "automatic_topic_moves_correct": 11,
+    "needs_review_moves": 1,
+    "all_moved_bytes_verified": true,
+    "jsonl_verified": true
+  },
+  "fallback_result": {
+    "filename": "01.txt",
+    "outcome": "suggestion-only",
+    "suggestion": "Invoice",
+    "mode": "suggestions-only",
+    "destination": null,
+    "recorded": null,
+    "recording_error": null,
+    "scores": {
+      "Invoice": 0.9865717887878418,
+      "Academic research": 0.5715404748916626,
+      "Travel itinerary": 3.714334297910682e-06,
+      "Medical report": 0.002912950934842229
+    },
+    "reason": "Suggestion only. Source untouched.",
+    "truncated": false,
+    "encoded_tokens": 241,
+    "categories": {
+      "Invoice": "Bills, payment requests, receipts, and financial transactions. 發票、帳單、收據及付款通知。",
+      "Academic research": "Scientific papers, studies, research findings, and scholarly analysis. 學術論文、科學研究、實驗方法與研究結果。",
+      "Travel itinerary": "Flight, hotel, transportation, and trip schedule information. 旅遊行程、航班、飯店預訂及交通安排。",
+      "Medical report": "Patient examination results, diagnosis, treatment and follow-up advice. 病患檢查報告、診斷、治療與回診建議。"
+    },
+    "top_two_gap": 0.4150313138961792
+  }
+}

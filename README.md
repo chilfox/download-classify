@@ -17,8 +17,12 @@ uv sync --extra test --python 3.12
 First install/cache the optional model using the smoke command below. In separate terminals, from the repository root:
 
 ```sh
-mkdir -p /tmp/download-classify-demo
-DOWNLOAD_CLASSIFY_FOLDER=/tmp/download-classify-demo \
+DEMO=$(mktemp -d /tmp/download-classify-demo.XXXXXX)
+mkdir "$DEMO/inbox"
+echo "Disposable demo: $DEMO"
+DOWNLOAD_CLASSIFY_FOLDER="$DEMO/inbox" \
+DOWNLOAD_CLASSIFY_SETTINGS_PATH="$DEMO/categories.json" \
+DOWNLOAD_CLASSIFY_MOVEMENT_LOG="$DEMO/movements.jsonl" \
   uv run --extra model-check uvicorn backend.app:app --host 127.0.0.1 --port 8000 --workers 1
 ```
 
@@ -45,6 +49,22 @@ Save topic categories, explicitly start monitoring, then add disposable document
 - Once the model is ready, saving an over-budget schema returns HTTP 422 without replacing settings. Before readiness, exact tokenizer-budget validation is deferred to processing; the first affected attempt reports any budget failure explicitly.
 
 Public operations: `GET /health`, `GET /settings`, `PUT /settings`, `POST /monitor/start`, `POST /monitor/stop`, `GET /status`, and `GET /results`. The single-page dashboard polls status/results every second. Results show filename, operating mode, classification, destination, recording status, all available scores, captured categories, excerpt/token metadata, and failure reasons. No document contents or filenames leave the local application.
+
+## Repeatable disposable demo and completed-workflow acceptance
+
+After caching the model, run from the repository root:
+
+```sh
+uv sync --extra model-check --extra test --python 3.12
+uv run --extra model-check --extra test python scripts/demo_acceptance.py \
+  --output /tmp/download-classify-demo-results.json
+```
+
+This macOS-only driver uses the public backend API in-process with its real background monitor and real local model, not a stub or a direct classification-only call. It creates a fresh disposable folder, saves the four fixture categories, starts monitoring, and adds the 12 labeled English/Traditional Chinese TXT/Markdown fixtures. It checks actual topic/NeedsReview moves, all original bytes, collision preservation, unsupported PDF/ZIP bytes and explanations, unchanged-file deduplication, start/restart baselines, and 12 persistent JSONL records. It also explicitly runs a real-model suggestions-only attempt and checks that its source stays untouched. Model failure is a failed run, never a hidden fallback. The printed temporary folder is retained for inspection; remove only that disposable folder yourself when finished.
+
+The recorded completed-workflow run achieved **11/12 correct predictions**, **11/12 automatic topic-movement coverage**, all 11 topic moves correct, and one actual NeedsReview move. See [complete demonstration acceptance](docs/demo-acceptance.md) and [raw API/filesystem results](docs/demo-acceptance-results.json). This script does not replace the independent smoke/input-budget checks or the deterministic monitoring-safety tests.
+
+For a desktop presentation, start the services above, edit/save categories in the dashboard (the exact acceptance descriptions are in `fixtures/model-acceptance/manifest.json`), click **Start monitoring**, wait for model **ready**, then copy disposable fixture files into the displayed inbox. Files already present when starting are intentionally ignored. The default Work/Personal/Research examples differ from the acceptance categories and need not reproduce the recorded scores. Observe topic destinations, an uncertain NeedsReview result, and a disposable PDF's unsupported explanation; click **Stop monitoring** when finished. Stop the backend to demonstrate the visible connection error and stale-data warning. Use Finder to inspect and manually handle NeedsReview documents. There is **no undo or automated restoration**; the JSONL trace is a movement record, not an undo feature. Stop both terminal processes with Ctrl-C.
 
 ## Checks
 
