@@ -1,6 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import './style.css'
+import { Monitoring } from './Monitoring'
 
 type Category = { name: string; description: string }
 type Settings = { categories: Category[] }
@@ -51,7 +52,8 @@ function App() {
       </fieldset>)}</div>
       <div className="actions"><button type="submit" disabled={!categories.length}>Save categories</button><output className={error ? 'status error' : 'status'} role="status">{message}</output></div>
     </form>
-    <footer>Settings are stored locally on this Mac. Editing affects future processing only.</footer>
+    <Monitoring />
+    <footer>Settings and document processing stay local on this Mac. Editing affects future attempts only. Model schema budgets are validated after the local model is ready.</footer>
   </main>
 }
 

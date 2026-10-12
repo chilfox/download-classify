@@ -7,6 +7,8 @@ show `truncated` to disclose excerpt-based decisions, including NeedsReview.
 from __future__ import annotations
 
 import codecs
+import os
+import stat
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -34,9 +36,13 @@ def read_opening(path: Path) -> OpeningText:
 
     Strict UTF-8 validation applies to the read opening, not the unseen tail.
     The extra byte detects oversize and is never included in model input.
-    Filesystem stability and symlink safety are the processing caller's job.
+    Reject symlinks at open time and non-regular descriptors, even if an entry
+    changes after scanning. The caller still checks source stability afterward.
     """
-    with path.open("rb") as source:
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(descriptor, "rb") as source:
+        if not stat.S_ISREG(os.fstat(source.fileno()).st_mode):
+            raise ValueError("Source is not a regular file")
         data = source.read(MAX_READ_BYTES + 1)
     truncated = len(data) > MAX_READ_BYTES
     opening = data[:MAX_READ_BYTES]
