@@ -10,7 +10,7 @@ dependencies = [
 
 [project.optional-dependencies]
 model-check = ["gliner2", "torch", "transformers"]
-test = ["httpx>=0.28,<1", "pytest>=8.3,<9"]
+test = ["httpx2>=2,<3", "pytest>=8.3,<9"]
 
 [tool.uv]
 package = false
