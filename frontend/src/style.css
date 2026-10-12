@@ -38,5 +38,5 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .scores { display: flex; flex-wrap: wrap; gap: 9px 20px; font-size: 13px; margin: 12px 0; }
 .scores > div { display: flex; gap: 7px; }
 .scores dd { font-variant-numeric: tabular-nums; color: #244734; }
-.input-disclosure { background: #f5f1e6; border-radius: 5px; padding: 8px; font-size: 12px; color: #705923; }
+.input-disclosure { overflow-wrap: anywhere; background: #f5f1e6; border-radius: 5px; padding: 8px; font-size: 12px; color: #705923; }
 @media (max-width: 600px) { main { margin: 18px auto; padding: 25px 20px; } fieldset { grid-template-columns: 1fr; } }

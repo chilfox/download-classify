@@ -48,7 +48,8 @@ def validated(settings: CategorySettings) -> CategorySettings:
 
 
 def create_app(settings_path: Path | str | None = None, monitored_folder: Path | str | None = None,
-               model=None, poll_interval: float = 1.0) -> FastAPI:
+               model=None, poll_interval: float = 1.0, mode: str | None = None,
+               movement_log: Path | str | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(application):
         monitor.thread.start()
@@ -76,8 +77,14 @@ def create_app(settings_path: Path | str | None = None, monitored_folder: Path |
         return load_categories()
 
     root = Path(monitored_folder or os.environ.get("DOWNLOAD_CLASSIFY_FOLDER", str(Path.home() / "DownloadClassifyDemo"))).absolute()
+    root = root.parent.resolve() / root.name
+    operating_mode = mode or os.environ.get("DOWNLOAD_CLASSIFY_MODE", "automatic")
+    if operating_mode not in {"automatic", "suggestions-only"}:
+        raise ValueError("Mode must be automatic or suggestions-only")
+    log_path = Path(movement_log or os.environ.get("DOWNLOAD_CLASSIFY_MOVEMENT_LOG", str(application.state.settings_path.parent / "movements.jsonl")))
+    log_path = log_path.absolute().parent.resolve() / log_path.name
     monitor = Monitor(root, lambda: {category.name: category.description for category in load_categories().categories},
-                      model if model is not None else LocalModel(), poll_interval)
+                      model if model is not None else LocalModel(), poll_interval, operating_mode, log_path)
 
     @application.get("/status")
     def status():
