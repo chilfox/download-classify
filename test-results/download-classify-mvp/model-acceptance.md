@@ -1,4 +1,6 @@
-# Local model acceptance
+# Local model acceptance - saved MVP report
+
+This is the recorded MVP validation evidence, not a live result. For maintained commands and policy, see [the model validation guide](../../docs/model-validation.md). Run commands from the repository root. Historical observations below are preserved.
 
 ## Decision and status
 
@@ -6,7 +8,7 @@ The real multilingual model meets the small demo prediction target: **11/12 corr
 
 Decision: automatic mode is justified for this disposable demo. The user explicitly approved **opening-excerpt-based automatic movement, including NeedsReview**, using the same thresholds. The complete schema, prefix, special tokens and selected opening excerpt must fit 512 encoded tokens. The 11/12 result validates only the short fixtures, not long-document classification quality. This is not production-quality evidence, calibrated confidence, or a guarantee for arbitrary user categories. The fixtures are hand-authored synthetic examples, not a held-out representative corpus. Thresholds were proposed as conservative cutoffs and retained after observing these results: the lowest qualifying score is 0.865; the lowest qualifying gap is 0.415. The one wrong prediction has score 0.422 and gap 0.147. Do not tune them down to increase coverage.
 
-**Ticket 01 is resolved. Its original validation was non-moving.** The completed backend now has independent real-model API/monitor/movement evidence: see [complete demonstration acceptance](demo-acceptance.md) and [raw results](demo-acceptance-results.json). The reusable input adapter and acceptance tool prepare approved excerpts without modifying source contents; the processing ticket implements movement and visible truncation disclosures. If loading fails, report model unavailable and leave files untouched; do not fabricate suggestions.
+**Ticket 01 is resolved. Its original validation was non-moving.** The completed backend now has independent real-model API/monitor/movement evidence: see [complete demonstration acceptance](demo-acceptance.md) and [raw results](demo-acceptance.json). The reusable input adapter and acceptance tool prepare approved excerpts without modifying source contents; the processing ticket implements movement and visible truncation disclosures. If loading fails, report model unavailable and leave files untouched; do not fabricate suggestions.
 
 ## Repeatable local run
 
@@ -17,7 +19,7 @@ uv run --extra model-check python scripts/model_acceptance.py --output /tmp/mode
 
 The script pins `fastino/gliner2-multi-v1` revision `ce747d79a8e362d3dee0b0b26d1201f7f1a8615a`, loads once on CPU, processes the 12 labeled UTF-8 TXT/Markdown fixtures serially, and writes every candidate score, token count, correctness, decision and latency. It never moves files. Model downloads must be completed separately if the checkpoint is not cached (the README smoke command permits the initial download). Acceptance sets `HF_HUB_OFFLINE=1` and disables HF telemetry before model imports, reusing the existing cache. No fixture content or filenames are sent to a cloud service.
 
-The committed observed run is [model-acceptance-results.json](model-acceptance-results.json). Run provenance: current Apple Silicon MacBook, macOS 26.5.2, Python 3.12.11, gliner2 2.1.0, torch 2.14.1, transformers 5.19.0. Cache-backed loading took **3.17 seconds**, median per-document inference **0.077 seconds**, maximum **0.088 seconds**. Counts include schema/prefix and span from 241 to 280 encoded tokens. These are serial CPU measurements, not concurrent API responsiveness evidence. Ordinary pytest and `/health` neither initialize nor validate this model.
+The committed observed run is [model-acceptance.json](model-acceptance.json). Run provenance: current Apple Silicon MacBook, macOS 26.5.2, Python 3.12.11, gliner2 2.1.0, torch 2.14.1, transformers 5.19.0. Cache-backed loading took **3.17 seconds**, median per-document inference **0.077 seconds**, maximum **0.088 seconds**. Counts include schema/prefix and span from 241 to 280 encoded tokens. These are serial CPU measurements, not concurrent API responsiveness evidence. Ordinary pytest and `/health` neither initialize nor validate this model.
 
 The dependency emits an extractor/model-type compatibility log and a `torch.jit.script` FutureWarning. Loading and all inferences completed nonetheless; these warnings are disclosed rather than suppressed. Ordinary tests run with warnings as errors without importing the model. Initial smoke also completed: load 3.69 seconds, Chinese/English inference 0.07/0.05 seconds. Its Chinese medical text was forced into Invoice because its three-label schema lacked Medical report; that two-example smoke is not quality acceptance.
 

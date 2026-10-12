@@ -1,4 +1,6 @@
-# Complete macOS demonstration acceptance
+# Complete macOS demonstration acceptance - saved MVP report
+
+This is the recorded ticket 05 evidence, not a live result. For maintained commands and acceptance guidance, see [the workflow validation guide](../../docs/demo-validation.md). Historical test counts and observations below are preserved; the subsequent review-fix verification is recorded in [review.md](../../.scratch/download-classify-mvp/review.md).
 
 ## Observed outcome
 
@@ -16,7 +18,7 @@ Ticket 05 independently exercised the integrated backend on 2026-10-12, based on
 
 The clinical-trial manuscript `10.md`, labeled Academic research, top-predicts Medical report but fails the fixed score/gap thresholds and actually reaches NeedsReview. Do not count its safe uncertainty routing as a correct topic prediction. English prediction accuracy is 5/6 and Traditional Chinese 6/6. TXT files reach distinct Invoice, Travel itinerary, Medical report and Academic research destinations despite sharing an extension. The `01.txt` collision preserved the existing document and moved the arriving bytes to `Invoice/01 (1).txt`.
 
-The raw [API/filesystem report](demo-acceptance-results.json) contains the captured category descriptions, every candidate score, encoded-token counts, expected labels, predictions, outcomes, destinations, SHA-256 hashes, status, and original/destination/time/result records. Its absolute temporary paths are observed provenance, not portable instructions. All 12 short fixtures used 241-280 tokens with no truncation. Categories and the source fixture manifest are committed under `fixtures/model-acceptance/`.
+The raw [API/filesystem report](demo-acceptance.json) contains the captured category descriptions, every candidate score, encoded-token counts, expected labels, predictions, outcomes, destinations, SHA-256 hashes, status, and original/destination/time/result records. Its absolute temporary paths are observed provenance, not portable instructions. All 12 short fixtures used 241-280 tokens with no truncation. Categories and the source fixture manifest are committed under `fixtures/model-acceptance/`.
 
 Environment: current Apple Silicon MacBook, macOS 26.5.2 / Darwin 25.5.0 arm64, Python 3.12.11, gliner2 2.1.0, torch 2.14.1, transformers 5.19.0. Checkpoint revision: `ce747d79a8e362d3dee0b0b26d1201f7f1a8615a`. Ordinary pytest does not import/initialize this model and is not quality evidence.
 
