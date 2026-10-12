@@ -61,12 +61,10 @@ def create_app(settings_path: Path | str | None = None) -> FastAPI:
         return {"status": "ok"}
 
     @application.get("/settings", response_model=CategorySettings)
-    @application.get("/categories", response_model=CategorySettings)
     def get_settings(request: Request) -> CategorySettings:
         return load_settings(request)
 
     @application.put("/settings", response_model=CategorySettings)
-    @application.put("/categories", response_model=CategorySettings)
     def save_settings(settings: CategorySettings, request: Request) -> CategorySettings:
         try:
             settings = validated(settings)
