@@ -1,5 +1,7 @@
 # Complete macOS workflow validation guide
 
+This guide validates the complete product workflow. For routine use, see the [user guide](user-guide.md); for local development and ordinary checks, see the [development guide](development.md).
+
 ## Purpose and commands
 
 Validate the completed public API, real background monitoring, local model and actual filesystem movement together. From the repository root:

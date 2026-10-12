@@ -1,5 +1,7 @@
 # Local model validation guide
 
+This guide documents model-specific validation and its limits. See the [architecture](architecture.md) for the processing design and the [development guide](development.md) for setup and routine project checks.
+
 ## Purpose and commands
 
 Validate the real local model independently of API health and ordinary tests. From the repository root:
