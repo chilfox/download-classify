@@ -1,0 +1,2 @@
+Invoice 1048
+Acme Research Services billed Northstar Labs $2,400 for laboratory analysis. Payment is due September 30, 2026. Please transfer funds to the supplier account and include the invoice number. This is a payment request, not a report of experimental findings.
