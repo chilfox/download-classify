@@ -17,9 +17,18 @@ Native Windows is excluded because document opening and directory traversal requ
 - `bash -n run-demo.sh`: passed. Actual launcher startup returned HTTP 200 from backend `/status` on port 8000 and frontend `/` on port 5173. Sending SIGTERM exited the launcher with status 143, stopped both services, and retained the disposable directory. No frontend behavior or API contract changed.
 - `uv run --extra test --extra model-check python scripts/demo_acceptance.py --output /tmp/download-classify-cross-platform-macos.json`: passed with the real local CPU model and cached weights. 11/12 fixture predictions correct; 11 correct topic moves and 1 NeedsReview move. Original bytes and 12 movement records verified, existing/colliding/unsupported files retained, stopped arrivals ignored, and suggestions-only retained the source. This is fixture evidence, not a general model-quality claim.
 
+The independent `uv run --extra model-check python scripts/model_smoke.py` also passed on macOS (loading and basic inference only). Full macOS workflow scores and movement outcomes are preserved in [the raw report](macos-demo-acceptance.json).
+
 ## Linux evidence
 
-Actual Linux validation is recorded below after execution; macOS results and mocked syscall failures do not establish Linux runtime acceptance.
+Linux validation was started in Docker but cancelled at the user's request before a completed report was received. No Linux execution result is included as acceptance evidence. The user explicitly waived further Linux validation for this implementation. Linux support is implemented but not runtime-accepted by this report; macOS results and mocked syscall failures do not establish Linux runtime acceptance.
+
+## Review
+
+Two independent reviews compared the implementation with starting commit `a3b01f3c376b2f6e478ac4f27f0383d6a83f6215`.
+
+- Standards: no hard violations; non-blocking heuristics concerned syscall selection and repeated fixture setup. The platform-specific artifact name intentionally identifies the environment behind the evidence.
+- Spec: Linux evidence was pending at review time and was subsequently waived by the user. The reviewer also flagged collision-stem shortening as a possible policy addition. It is retained to preserve the spec's numbered, byte-preserving collision behavior at a genuine filesystem limit, not to add a new organization policy. An added ASCII maximum-length integration case reproduced the failure even on macOS before the fix; the existing multibyte case exercises the corresponding Linux byte-limit difference. Ordinary names and collision numbering remain unchanged.
 
 ## Limits
 
