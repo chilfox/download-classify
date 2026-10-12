@@ -2,6 +2,7 @@ import React from 'react'
 
 type Status = {
   folder: string
+  mode: 'automatic' | 'suggestions-only'
   monitoring: boolean
   processing: string | null
   model_status: string
@@ -12,6 +13,9 @@ type Result = {
   filename: string
   outcome: string
   suggestion: string | null
+  destination: string | null
+  recorded: boolean | null
+  recording_error: string | null
   scores: Record<string, number> | null
   reason: string
   truncated: boolean | null
@@ -66,11 +70,12 @@ export function Monitoring() {
   }
 
   return <section className="monitoring" aria-labelledby="monitoring-title">
-    <div className="section-heading"><h2 id="monitoring-title">Monitoring</h2><p>Suggestions-only slice. No files are moved, deleted, or modified.</p></div>
+    <div className="section-heading"><h2 id="monitoring-title">Monitoring</h2><p>{status?.mode === 'automatic' ? 'Automatic mode: clear results move to a topic folder; uncertain results move to NeedsReview. File contents are never modified.' : status?.mode === 'suggestions-only' ? 'Suggestions-only fallback. No files are moved, deleted, or modified.' : 'Operating mode will appear when connected.'}</p></div>
     <p className="notice">Use disposable documents in a dedicated demo folder. Only new root-level TXT and Markdown files are classified. Existing files, nested files, symlinks, and temporary downloads are excluded.</p>
     {!status && !connectionError && <p role="status">Loading monitoring status…</p>}
     {status && <>
       <dl className="monitor-details">
+        <div><dt>Operating mode</dt><dd>{status.mode}</dd></div>
         <div><dt>Monitored folder</dt><dd>{status.folder}</dd></div>
         <div><dt>Local model</dt><dd>{status.model_status === 'loading' ? 'Loading local model…' : status.model_status === 'not-loaded' ? 'Not loaded - start monitoring to load cached weights' : status.model_status}</dd></div>
         <div><dt>Monitoring</dt><dd>{status.monitoring ? 'Watching for new stable files' : 'Stopped'}{status.processing ? ` - ${status.monitoring ? 'Processing' : 'Finishing active attempt'}: ${status.processing}` : ''}</dd></div>
@@ -90,7 +95,10 @@ export function Monitoring() {
     {!results.length && <p className="notice">No results yet. Start monitoring, then add a new document. All PDFs are unsupported and stay untouched.</p>}
     <ol className="results">{results.map((result, index) => <li key={index}>
       <div className="result-heading"><strong>{result.filename}</strong><span className={`badge ${result.outcome === 'failed' ? 'failure' : ''}`}>{result.outcome}</span></div>
-      {result.suggestion && <p>Suggested classification: <strong>{result.suggestion}</strong></p>}
+      {result.suggestion && <p>Classification: <strong>{result.suggestion}</strong></p>}
+      {result.destination && <p className="input-disclosure">Destination: <strong>{result.destination}</strong></p>}
+      {result.recorded === true && <p className="notice">Movement trace saved locally.</p>}
+      {result.recording_error && <p className="status error" role="alert">{result.recording_error}</p>}
       {result.scores && <dl className="scores" aria-label="Model scores">{Object.entries(result.scores).map(([name, score]) => <div key={name}><dt>{name}</dt><dd>{score.toFixed(3)}</dd></div>)}</dl>}
       {result.truncated !== null && <p className="input-disclosure">{result.truncated ? 'Excerpt only - the full document was NOT considered. Long-document quality is unvalidated.' : 'Complete bounded opening considered; no truncation.'}{result.encoded_tokens !== null ? ` Encoded input: ${result.encoded_tokens}/512 tokens.` : ''}</p>}
       <p className={result.outcome === 'failed' ? 'status error' : 'notice'}>{result.reason}</p>

@@ -1,21 +1,28 @@
-"""One serial, local-only suggestions worker. No source writes or movement."""
+"""One serial local classification and optional automatic movement worker."""
 from __future__ import annotations
 
+import json
 import math
+import os
 import stat
+from datetime import datetime, timezone
 import threading
 from pathlib import Path
 from typing import Callable
 
 from backend.model_input import read_opening
+from backend.movement import SourceChanged, move_document, open_directory, signature
 
 MIN_SCORE = 0.80
 MIN_GAP = 0.20
 
 
 class Monitor:
-    def __init__(self, root: Path, categories: Callable, model, poll_interval: float):
+    def __init__(self, root: Path, categories: Callable, model, poll_interval: float, mode: str, log_path: Path):
         self.root = root
+        self.mode = mode
+        self.log_path = log_path
+        self.root_identity = None
         self.categories = categories
         self.model = model
         self.interval = poll_interval
@@ -38,7 +45,7 @@ class Monitor:
             return {"folder": str(self.root), "monitoring": self.monitoring,
                     "processing": self.busy, "model_status": self.model_status,
                     "model_error": self.model_error, "monitor_error": self.monitor_error,
-                    "movement_enabled": False, "mode": "suggestions-only"}
+                    "movement_enabled": self.mode == "automatic", "mode": self.mode}
 
     def start(self):
         with self.lock:
@@ -47,6 +54,8 @@ class Monitor:
             if not self.monitoring:
                 if not self.root.is_dir() or self.root.is_symlink():
                     raise ValueError("Configured monitored folder must be an existing non-symlink directory")
+                info = self.root.stat(follow_symlinks=False)
+                self.root_identity = (info.st_dev, info.st_ino)
                 self.baseline = {path.name for path in self.root.iterdir()}
                 self.previous = {}
                 self.processed = {}
@@ -68,14 +77,16 @@ class Monitor:
 
     @staticmethod
     def signature(path):
-        stat = path.stat(follow_symlinks=False)
-        return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns
+        return signature(path.stat(follow_symlinks=False))
 
     def scan(self):
-        if self.root.is_symlink():
-            raise OSError("Monitored folder became a symbolic link")
+        info = self.root.stat(follow_symlinks=False)
+        if not stat.S_ISDIR(info.st_mode) or (info.st_dev, info.st_ino) != self.root_identity:
+            raise OSError("Monitored folder identity changed or became a symbolic link")
         current = {}
         for path in self.root.iterdir():
+            if path == self.log_path.absolute():
+                continue
             name = path.name.lower()
             if name.startswith((".", "~$")) or name.endswith((".crdownload", ".part", ".partial", ".download", ".tmp", ".temp")):
                 continue
@@ -84,7 +95,7 @@ class Monitor:
             except FileNotFoundError:
                 continue
             if stat.S_ISREG(info.st_mode):
-                current[path.name] = (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns)
+                current[path.name] = signature(info)
         return current
 
     def run(self):
@@ -132,14 +143,16 @@ class Monitor:
 
     def attempt(self, name, signature):
         path = self.root / name
+        moved = False
         result = {"filename": name, "outcome": "failed", "suggestion": None,
+                  "mode": self.mode, "destination": None, "recorded": None, "recording_error": None,
                   "scores": None, "reason": None, "truncated": None,
                   "encoded_tokens": None, "categories": None}
         try:
             if path.is_symlink() or self.signature(path) != signature:
                 return
             if path.suffix.lower() not in {".txt", ".md", ".markdown"}:
-                result.update(outcome="unsupported", reason="Unsupported format. Only TXT and Markdown are supported; all PDFs stay untouched.")
+                result.update(outcome="skipped", reason="Unsupported format. Only TXT and Markdown are supported; all PDFs stay untouched.")
             else:
                 categories = self.categories()
                 if not categories:
@@ -161,15 +174,44 @@ class Monitor:
                 result.update(outcome="suggestion-only", suggestion=ranked[0][0] if clear else "NeedsReview",
                               scores=scores, truncated=truncated, encoded_tokens=tokens, top_two_gap=gap,
                               reason="Opening excerpt only; long-document quality unvalidated. Source untouched." if truncated else "Suggestion only. Source untouched.")
+                if self.mode == "automatic":
+                    destination = move_document(self.root, self.root_identity, name, signature, result["suggestion"])
+                    moved = True
+                    result.update(outcome="moved" if clear else "needs-review", destination=str(destination),
+                                  reason="Opening excerpt only; long-document quality unvalidated. Original contents preserved." if truncated else "Original contents preserved.")
+                    try:
+                        if self.log_path.suffix.lower() != ".jsonl":
+                            raise OSError("Movement trace must use a .jsonl path, not a document path")
+                        self.log_path.parent.mkdir(parents=True, exist_ok=True)
+                        parent_fd = open_directory(self.log_path.parent)
+                        try:
+                            fd = os.open(self.log_path.name, os.O_WRONLY | os.O_APPEND | os.O_CREAT | os.O_NOFOLLOW | os.O_NONBLOCK, 0o600, dir_fd=parent_fd)
+                        finally:
+                            os.close(parent_fd)
+                        with os.fdopen(fd, "a", encoding="utf-8") as stream:
+                            trace = os.fstat(stream.fileno())
+                            if not stat.S_ISREG(trace.st_mode) or trace.st_nlink != 1:
+                                raise OSError("Movement trace must be a regular file without hard links")
+                            if (trace.st_dev, trace.st_ino) == signature[:2]:
+                                raise OSError("Movement trace must not modify the moved document")
+                            stream.write(json.dumps({"original": str(path), "destination": str(destination),
+                                                     "time": datetime.now(timezone.utc).isoformat(), "result": result["outcome"]}, ensure_ascii=False) + "\n")
+                            stream.flush()
+                            os.fsync(stream.fileno())
+                        result["recorded"] = True
+                    except Exception as error:
+                        result.update(recorded=False, recording_error=f"File moved, but movement recording failed: {error}")
+        except SourceChanged:
+            return
         except Exception as error:
-            result["reason"] = f"Processing failed: {error}"
+            result.update(outcome="failed", reason=f"Processing failed: {error}")
         finally:
             try:
                 unchanged = not path.is_symlink() and self.signature(path) == signature
             except OSError:
                 unchanged = False
             with self.lock:
-                if unchanged:
+                if unchanged or moved:
                     self.results.append(result)
                     self.processed[name] = signature
                 else:

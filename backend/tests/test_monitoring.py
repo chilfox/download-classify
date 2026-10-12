@@ -29,11 +29,11 @@ def wait_for(client, predicate, endpoint="/results"):
     raise AssertionError(f"Timed out: {value}")
 
 
-def test_new_stable_documents_get_suggestions_without_touching_sources(tmp_path):
+def test_suggestions_only_fallback_never_touches_sources(tmp_path):
     root = tmp_path / "inbox"
     root.mkdir()
     (root / "existing.txt").write_text("existing")
-    with TestClient(create_app(tmp_path / "settings.json", root, Model(), poll_interval=0.02)) as client:
+    with TestClient(create_app(tmp_path / "settings.json", root, Model(), poll_interval=0.02, mode="suggestions-only")) as client:
         assert client.post("/monitor/start").status_code == 200
         (root / "invoice.txt").write_text("Invoice payment due")
         results = wait_for(client, lambda rows: len(rows) == 1)
@@ -70,12 +70,13 @@ def test_exclusions_dedup_and_restart_baseline(tmp_path):
         assert [row["filename"] for row in rows] == ["new.md", "later.txt"]
 
 
-def test_start_loads_model_in_background_once_and_reports_unavailability(tmp_path):
+@pytest.mark.parametrize("mode", ["automatic", "suggestions-only"])
+def test_start_loads_model_in_background_once_and_reports_unavailability(tmp_path, mode):
     class UnavailableModel(Model):
         def load(self):
             raise RuntimeError("Cached weights missing")
 
-    with TestClient(create_app(tmp_path / "settings.json", tmp_path, UnavailableModel(), poll_interval=0.02)) as client:
+    with TestClient(create_app(tmp_path / "settings.json", tmp_path, UnavailableModel(), poll_interval=0.02, mode=mode)) as client:
         assert client.post("/monitor/start").status_code == 200
         status = wait_for(client, lambda status: status["model_status"] == "unavailable", "/status")
         assert "Cached weights missing" in status["model_error"]
@@ -90,6 +91,8 @@ def test_start_loads_model_in_background_once_and_reports_unavailability(tmp_pat
     ({"One": 0.79}, "NeedsReview"), ({"One": 0.80}, "One"),
     ({"One": 0.9, "Two": 0.8}, "NeedsReview"),
     ({"One": 0.9, "Two": 0.1}, "One"),
+    ({"One": 0.8, "Two": 0.6}, "One"),
+    ({"One": 0.9, "Two": 0.899}, "NeedsReview"),
 ])
 def test_fixed_thresholds_use_all_real_candidate_scores(tmp_path, scores, expected):
     class ScoredModel(Model):
@@ -102,7 +105,9 @@ def test_fixed_thresholds_use_all_real_candidate_scores(tmp_path, scores, expect
         (tmp_path / "new.txt").write_text("text")
         row = wait_for(client, lambda rows: bool(rows))[0]
         assert row["suggestion"] == expected and row["scores"] == scores
-        assert (tmp_path / "new.txt").read_text() == "text"
+        assert row["outcome"] == ("needs-review" if expected == "NeedsReview" else "moved")
+        assert (tmp_path / expected / "new.txt").read_text() == "text"
+        assert not (tmp_path / "new.txt").exists()
 
 
 @pytest.mark.parametrize("scores", [{"Work": 0.9}, {"Work": float("nan"), "Personal": 0.1, "Research": 0.1},
@@ -132,7 +137,7 @@ def test_unsupported_unusable_and_inference_errors_are_explicit_and_preserve_byt
             (tmp_path / name).write_bytes(content)
         rows = wait_for(client, lambda rows: len(rows) == 4)
         by_name = {row["filename"]: row for row in rows}
-        assert by_name["paper.pdf"]["outcome"] == "unsupported"
+        assert by_name["paper.pdf"]["outcome"] == "skipped"
         assert "UTF-8" in by_name["empty.md"]["reason"]
         assert "decode" in by_name["binary.txt"]["reason"]
         assert "Inference unavailable" in by_name["valid.txt"]["reason"]
@@ -148,7 +153,7 @@ def test_oversized_opening_is_disclosed_without_modifying_unicode_source(tmp_pat
         row = wait_for(client, lambda rows: bool(rows))[0]
         assert row["truncated"] is True
         assert "Opening excerpt only" in row["reason"]
-        assert (tmp_path / "long.txt").read_bytes() == content
+        assert (tmp_path / "Work" / "long.txt").read_bytes() == content
 
 
 def test_settings_schema_budget_errors_are_explicit_and_preserve_saved_settings(tmp_path):
@@ -212,7 +217,7 @@ def test_model_is_reused_across_stops_and_starts(tmp_path):
         client.post("/monitor/start")
         (tmp_path / "second.txt").write_text("second")
         rows = wait_for(client, lambda rows: len(rows) == 2)
-        assert all(row["outcome"] == "suggestion-only" for row in rows)
+        assert all(row["outcome"] == "moved" for row in rows)
         assert client.get("/status").json()["model_status"] == "ready"
 
 
@@ -226,7 +231,7 @@ def test_continuously_changing_download_waits_for_consecutive_stable_scans(tmp_p
         assert client.get("/results").json() == []
         row = wait_for(client, lambda rows: bool(rows))[0]
         assert row["filename"] == "downloading.txt"
-        assert path.read_text() == "download chunk 29"
+        assert (tmp_path / "Work" / path.name).read_text() == "download chunk 29"
 
 
 class BlockingModel(Model):
@@ -264,10 +269,13 @@ def test_status_and_stop_remain_responsive_during_inference_and_categories_are_s
         rows = wait_for(client, lambda rows: len(rows) == 1)
         assert rows[0]["suggestion"] == "Before"
         assert rows[0]["categories"] == {"Before": "Original"}
+        assert (tmp_path / "Before" / "active.txt").read_text() == "original"
+        assert (tmp_path / "not-started.txt").read_text() == "untouched"
         client.post("/monitor/start")
         (tmp_path / "later.txt").write_text("later")
         rows = wait_for(client, lambda rows: len(rows) == 2)
         assert rows[1]["suggestion"] == "After"
+        assert (tmp_path / "After" / "later.txt").read_text() == "later"
 
 
 def test_lifespan_shutdown_waits_for_active_attempt_and_does_not_start_another(tmp_path):
@@ -313,8 +321,9 @@ def test_changed_during_inference_discards_stale_scores_and_retries_after_stabil
         finally:
             model.release.set()
         rows = wait_for(client, lambda rows: len(rows) == 1)
-        assert rows[0]["outcome"] == "suggestion-only"
+        assert rows[0]["outcome"] == "moved"
         assert rows[0]["suggestion"] == "Personal"
-        assert path.read_text() == "new content"
+        assert (tmp_path / "Personal" / path.name).read_text() == "new content"
+        assert not (tmp_path / "Work").exists()
         time.sleep(0.1)
         assert client.get("/results").json() == rows
