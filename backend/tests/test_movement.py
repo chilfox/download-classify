@@ -261,12 +261,12 @@ def test_fifo_trace_failure_is_reported_without_blocking_processing(tmp_path):
         assert Path(row["destination"]).read_bytes() == b"original"
 
 
-def test_maximum_length_unicode_filename_collision_preserves_bytes(tmp_path):
+@pytest.mark.parametrize("name", ["文" * 83 + ".txt", "a" * 251 + ".txt"])
+def test_maximum_length_filename_collision_preserves_bytes(tmp_path, name):
     root = tmp_path / "inbox"
     root.mkdir()
     folder = root / "Work"
     folder.mkdir()
-    name = "文" * 83 + ".txt"
     (folder / name).write_bytes(b"existing")
     with TestClient(create_app(tmp_path / "settings.json", root, Model(), poll_interval=0.01)) as client:
         client.post("/monitor/start")

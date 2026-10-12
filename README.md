@@ -8,7 +8,7 @@ Clear classifications move into their topic folders. Uncertain classifications m
 
 ## Try it locally
 
-You need macOS, [uv](https://docs.astral.sh/uv/), and Node.js/npm. Python 3.12 is managed by uv. From the repository root:
+Requires macOS or Linux, [uv](https://docs.astral.sh/uv/), and Node.js/npm. Python 3.12 is managed by uv. On Linux, automatic movement requires a libc exposing `renameat2` and a kernel/filesystem supporting `RENAME_NOREPLACE`; if unavailable, movement fails safely and leaves the source in place. Native Windows is not supported because runtime file handling depends on POSIX APIs. From the repository root:
 
 ```sh
 uv python install 3.12
@@ -19,7 +19,7 @@ uv sync --extra model-check --python 3.12
 Create a dedicated disposable inbox:
 
 ```sh
-DEMO=$(mktemp -d /tmp/download-classify-demo.XXXXXX)
+DEMO=$(mktemp -d "${TMPDIR:-/tmp}/download-classify-demo.XXXXXX")
 mkdir "$DEMO/inbox"
 echo "Demo folder: $DEMO"
 ```

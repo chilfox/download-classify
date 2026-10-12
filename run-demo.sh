@@ -11,8 +11,9 @@ for command in uv npm; do
   fi
 done
 
-if [[ "$(uname -s)" != "Darwin" ]]; then
-  echo 'This demo supports macOS only.' >&2
+OS="$(uname -s)"
+if [[ "$OS" != "Darwin" && "$OS" != "Linux" ]]; then
+  printf 'This demo supports macOS and Linux, not %s. Native Windows is unsupported.\n' "$OS" >&2
   exit 1
 fi
 
@@ -21,7 +22,11 @@ if [[ ! -d frontend/node_modules ]]; then
   (cd frontend && npm ci)
 fi
 
-DEMO="$(mktemp -d /tmp/download-classify-demo.XXXXXX)"
+if [[ -n "${TMPDIR:-}" ]]; then
+  DEMO="$(mktemp -d "${TMPDIR%/}/download-classify-demo.XXXXXX")"
+else
+  DEMO="$(mktemp -d /tmp/download-classify-demo.XXXXXX)"
+fi
 mkdir "$DEMO/inbox"
 printf 'Disposable demo folder: %s\n' "$DEMO"
 printf 'Documents placed in this inbox may be moved into topic folders.\n' >&2

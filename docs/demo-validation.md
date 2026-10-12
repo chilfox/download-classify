@@ -1,4 +1,4 @@
-# Complete macOS workflow validation guide
+# Complete macOS and Linux workflow validation guide
 
 This guide validates the complete product workflow. For routine use, see the [user guide](user-guide.md); for local development and ordinary checks, see the [development guide](development.md).
 
@@ -19,7 +19,7 @@ uv run --extra test pytest -W error
 (cd frontend && npm run check && npm run build)
 ```
 
-The macOS-only driver uses FastAPI TestClient with the real application lifespan, serial monitor and cached model, without substituting model inference. It creates, prints and retains a fresh disposable folder. Never use real Downloads or existing user documents. Match the category descriptions in `fixtures/model-acceptance/manifest.json` to reproduce the fixture workflow. Missing model weights fail the run rather than silently activating a fallback.
+The driver is intended for macOS and Linux. It uses FastAPI TestClient with the real application lifespan, serial monitor and cached model, without substituting model inference. It creates, prints and retains a fresh disposable folder. Never use real Downloads or existing user documents. Match the category descriptions in `fixtures/model-acceptance/manifest.json` to reproduce the fixture workflow. Missing model weights fail the run rather than silently activating a fallback.
 
 ## What to verify
 
@@ -37,6 +37,8 @@ Inspect desktop typography, alignment, wrapping and overflow. Mobile layouts and
 
 ## Evidence and limitations
 
+Platform-specific evidence for the macOS/Linux adaptation is in [the cross-platform validation report](../test-results/cross-platform-support/validation.md). Support is conditional on the runtime and filesystem requirements, not on every Linux distribution having been tested.
+
 Saved MVP observations are in [the complete acceptance report](../test-results/download-classify-mvp/demo-acceptance.md) and [raw API/filesystem results](../test-results/download-classify-mvp/demo-acceptance.json). They record a particular execution, not current runtime state. Absolute temporary paths and screenshot pointers are provenance, not portable instructions or permanent artifact guarantees.
 
-Automatic movement is verified only on the current macOS machine. No production-safety, Ubuntu-compatibility or clean-install claims. Stability scans are a heuristic, not protection against hostile writers. Excerpt-based automatic movement is approved and visibly disclosed, but long-document quality remains unvalidated. Keep sample documents disposable.
+Record the operating system and runtime for each execution. macOS evidence does not establish Linux behavior, and Linux support claims require actual Linux execution. Linux movement depends on libc `renameat2` and kernel/filesystem `RENAME_NOREPLACE`; unsupported combinations must fail safely. Do not claim production safety or clean-install reproducibility without corresponding evidence. Stability scans are a heuristic, not protection against hostile writers. Excerpt-based automatic movement is approved and visibly disclosed, but long-document quality remains unvalidated. Keep sample documents disposable.

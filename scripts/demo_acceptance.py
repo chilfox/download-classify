@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real-model macOS API/filesystem acceptance in a fresh disposable directory.
+"""Real-model macOS/Linux API/filesystem acceptance in a fresh disposable directory.
 
 Requires model-check and test extras plus cached weights. No model substitution.
 Keeps the disposable directory for inspection; never uses the user's Downloads.
@@ -40,8 +40,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    if sys.platform != "darwin":
-        parser.error("Automatic movement acceptance requires macOS")
+    if sys.platform not in {"darwin", "linux"}:
+        parser.error("Automatic movement acceptance requires macOS or Linux; native Windows is unsupported")
     workspace = Path(tempfile.mkdtemp(prefix="download-classify-acceptance-")).resolve()
     inbox = workspace / "inbox"
     inbox.mkdir()

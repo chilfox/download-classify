@@ -1,6 +1,6 @@
 # Development guide
 
-This guide covers local setup, running the application, and project verification. The supported development and acceptance environment is the current macOS machine; this is not a claim of clean-install reproducibility or compatibility with other operating systems.
+This guide covers local setup, running the application, and project verification on macOS and Linux. Linux automatic movement requires libc support for `renameat2` and a kernel/filesystem implementing `RENAME_NOREPLACE`; unsupported environments fail safely without moving the source. Native Windows is not supported: document opening and safe directory-relative movement rely on POSIX APIs. Platform support is distinct from validation evidence; consult the workflow validation guide for environments actually exercised.
 
 ## Requirements and setup
 
@@ -23,7 +23,7 @@ uv sync --extra model-check --python 3.12
 Use a dedicated disposable directory. Create it and its inbox:
 
 ```sh
-DEMO=$(mktemp -d /tmp/download-classify-demo.XXXXXX)
+DEMO=$(mktemp -d "${TMPDIR:-/tmp}/download-classify-demo.XXXXXX")
 mkdir "$DEMO/inbox"
 echo "$DEMO"
 ```
@@ -79,7 +79,7 @@ uv run --extra model-check --python 3.12 python scripts/model_acceptance.py \
   --output /tmp/model-acceptance-results.json
 ```
 
-For a full workflow acceptance using the real monitor, API, model, and filesystem movement, use the [workflow validation guide](demo-validation.md). It is macOS-only and uses disposable fixtures. See the [model validation guide](model-validation.md) for score semantics, input constraints, and evidence limitations. Never treat API health or ordinary test success as model-quality evidence.
+For a full workflow acceptance using the real monitor, API, model, and filesystem movement, use the [workflow validation guide](demo-validation.md). It supports macOS and Linux and uses disposable fixtures. See the [model validation guide](model-validation.md) for score semantics, input constraints, and evidence limitations. Never treat API health or ordinary test success as model-quality evidence.
 
 ## Related technical documentation
 

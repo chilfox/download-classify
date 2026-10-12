@@ -84,4 +84,4 @@ The backend reads these environment variables at startup:
 - `DOWNLOAD_CLASSIFY_MOVEMENT_LOG`: movement trace path; defaults to `movements.jsonl` beside settings.
 - `DOWNLOAD_CLASSIFY_MODE`: `automatic` by default, or `suggestions-only`.
 
-The backend must use one worker process. Automatic filesystem movement is macOS-only. See the [development guide](development.md) for startup and verification commands.
+The backend must use one worker process. Automatic filesystem movement is supported on macOS and Linux. On Linux, libc must expose `renameat2` and the kernel/filesystem must support `RENAME_NOREPLACE`; otherwise movement fails safely without moving the source. Native Windows is not supported because runtime file and directory handling uses POSIX operations. See the [development guide](development.md) for startup and verification commands.

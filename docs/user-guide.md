@@ -4,7 +4,7 @@ This guide explains how to configure categories, monitor a dedicated folder, and
 
 ## Before you begin
 
-Download Classify is a local macOS application for new TXT, Markdown, and text-based PDF documents. PDF text extraction and classification use local software; document contents and filenames are not sent to cloud services. PDF support uses `pypdf` (version `>=6.20,<7`) without OCR.
+Download Classify is a local macOS and Linux application for new TXT, Markdown, and text-based PDF documents. Linux automatic movement requires libc `renameat2` support and a kernel/filesystem supporting `RENAME_NOREPLACE`; if unavailable, movement fails safely and leaves the source untouched. Native Windows is not supported because the runtime relies on POSIX file and directory operations. PDF text extraction and classification use local software; document contents and filenames are not sent to cloud services. PDF support uses `pypdf` (version `>=6.20,<7`) without OCR.
 
 Use a dedicated folder containing disposable test files. Automatic mode is enabled by default and moves files after classification. The app never deletes or overwrites documents, but it has no undo or automatic restoration. Do not point it at your real Downloads folder or files you are actively editing.
 
@@ -36,10 +36,12 @@ The monitor processes files serially. Stop prevents new attempts, but an active 
 ## Understand results
 
 - **Topic name / `moved`:** The model selected a topic and the file was moved into that topic's folder.
-- **`NeedsReview`:** The result was uncertain and, in automatic mode, the file was moved into `NeedsReview`. Review it manually in Finder.
+- **`NeedsReview`:** The result was uncertain and, in automatic mode, the file was moved into `NeedsReview`. Review it manually in Finder on macOS, or in your file manager on Linux.
 - **`skipped`:** The file format is unsupported and the file was left untouched. Supported extensions are `.txt`, `.md`, `.markdown`, and `.pdf` (extension matching is case-insensitive).
 - **`failed`:** Processing failed. The source is left untouched. The result includes an explanation where available. For PDFs, encrypted, malformed, or textless files fail rather than being classified; no password prompt or OCR is provided.
 - **Movement trace:** Successful moves are recorded locally as JSON Lines beside the settings file by default. A recording error is shown separately; it does not undo a completed move.
+
+Existing destination files are never overwritten. Filename collisions receive a numbered name such as `report (1).txt`; a very long stem may be shortened to leave room for the number and extension within the destination filesystem's filename limit.
 
 The dashboard shows current-process results only. Results do not persist after the backend restarts. There is no history API or retry button. Unchanged files, including failed attempts, are not repeatedly processed during the same monitoring run.
 

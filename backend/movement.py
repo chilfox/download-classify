@@ -1,4 +1,4 @@
-"""macOS atomic no-replace movement, anchored to verified directory descriptors.
+"""macOS/Linux atomic no-replace movement, anchored to verified directory descriptors.
 
 No portable rename fallback: os.rename can overwrite a late collision. Filesystem
 stability is a heuristic; this is not protection against a hostile local process
@@ -37,10 +37,15 @@ def open_directory(path):
 def move_document(root, root_identity, name, expected, topic):
     if topic in {"", ".", ".."} or any(char in topic for char in "/\\:"):
         raise ValueError("Unsafe destination folder")
-    if sys.platform != "darwin":
-        raise OSError("Automatic movement requires macOS exclusive rename; use suggestions-only mode")
-    libc = ctypes.CDLL(None, use_errno=True)
-    rename = libc.renameatx_np
+    if sys.platform not in {"darwin", "linux"}:
+        raise OSError("Automatic movement requires macOS or Linux safe rename; use suggestions-only mode")
+    try:
+        libc = ctypes.CDLL(None, use_errno=True)
+        rename = libc.renameatx_np if sys.platform == "darwin" else libc.renameat2
+    except (AttributeError, OSError) as exc:
+        raise OSError("Required safe rename is unavailable in the runtime library; "
+                      "install a compatible runtime or use suggestions-only mode") from exc
+    flags = 0x4 if sys.platform == "darwin" else 0x1  # RENAME_EXCL / RENAME_NOREPLACE
     rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
     rename.restype = ctypes.c_int
     root_fd = open_directory(root)
@@ -69,12 +74,24 @@ def move_document(root, root_identity, name, expected, topic):
                 if (root_info.st_dev, root_info.st_ino) != root_identity or not stat.S_ISDIR(folder_info.st_mode) or (folder_info.st_dev, folder_info.st_ino) != (opened.st_dev, opened.st_ino):
                     raise OSError("Unsafe destination: directory binding changed")
                 original = Path(name)
-                candidate = name if counter == 0 else f"{original.stem} ({counter}){original.suffix}"
-                # RENAME_EXCL = 0x4. Atomic EEXIST for any existing entry,
-                # including symlinks. Never use an availability check here.
-                if rename(root_fd, os.fsencode(name), destination_fd, os.fsencode(candidate), 0x4) == 0:
+                candidate = name
+                if counter:
+                    suffix = f" ({counter}){original.suffix}"
+                    stem = original.stem
+                    name_max = os.fpathconf(destination_fd, "PC_NAME_MAX")
+                    # Reserve space for the collision number and extension, and
+                    # trim whole characters rather than splitting UTF-8 bytes.
+                    while name_max > 0 and len(os.fsencode(stem + suffix)) > name_max and stem:
+                        stem = stem[:-1]
+                    candidate = stem + suffix
+                # Atomic EEXIST for any existing entry, including symlinks.
+                # Never use an availability check or overwrite-capable fallback.
+                if rename(root_fd, os.fsencode(name), destination_fd, os.fsencode(candidate), flags) == 0:
                     return root / topic / candidate
                 error = ctypes.get_errno()
+                if error in {errno.ENOSYS, errno.EINVAL, errno.EOPNOTSUPP, errno.ENOTSUP}:
+                    raise OSError(error, "Required safe rename is unsupported by the kernel or filesystem; "
+                                  "use a compatible filesystem/runtime or suggestions-only mode")
                 if error != errno.EEXIST:
                     raise OSError(error, os.strerror(error))
             raise OSError("Too many destination filename collisions")
