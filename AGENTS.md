@@ -10,6 +10,26 @@ The stack is React + TypeScript + Vite for the frontend and Python + FastAPI for
 
 Before implementation, read `README.md` and the relevant specification, inspect `git status`, and run the documented baseline checks. For documentation-only changes, checks may be skipped with an explicit reason. Do not regenerate the scaffold or reinstall dependencies unnecessarily.
 
+## Testing and verification
+
+Run from the repository root after implementation (setup commands are in `README.md`):
+
+```sh
+uv lock --check
+uv run --extra test pytest -W error
+(cd frontend && npm run check && npm run build)
+```
+
+The pytest test exercises the public HTTP health API without model weights or inference. Frontend checks verify types and compilation, not browser connectivity. For connectivity changes, start both services using the README commands and open `http://127.0.0.1:5173`: confirm `API status: ok`, then stop the backend and reload to confirm a visible `Connection error`.
+
+Run real-model validation separately, only when model integration changes or its feasibility needs rechecking:
+
+```sh
+uv run --extra model-check --python 3.12 python scripts/model_smoke.py
+```
+
+This may download weights. Record actual outputs and limitations; API health and passing stub-free baseline tests do not establish model quality or organizer completion. Current readiness evidence is in `.scratch/mvp-readiness/spec.md`.
+
 ## Agent skills
 
 ### Issue tracker
