@@ -6,6 +6,10 @@ This is a two-hour hackathon MVP, not a production file manager. Use disposable 
 
 The stack is React + TypeScript + Vite for the frontend and Python + FastAPI for the backend. The implementation spec is `.scratch/download-classify-mvp/spec.md`.
 
+## Session start
+
+Before implementation, read `README.md` and the relevant specification, inspect `git status`, and run the documented baseline checks. For documentation-only changes, checks may be skipped with an explicit reason. Do not regenerate the scaffold or reinstall dependencies unnecessarily.
+
 ## Agent skills
 
 ### Issue tracker

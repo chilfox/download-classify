@@ -1,13 +1,20 @@
 [project]
 name = "download-classify-readiness"
 version = "0.1.0"
-description = "Local GLiNER2 multilingual model feasibility smoke check"
+description = "Minimal local API baseline"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "gliner2",
-    "torch",
-    "transformers",
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.34,<1",
 ]
+
+[project.optional-dependencies]
+model-check = ["gliner2", "torch", "transformers"]
+test = ["httpx>=0.28,<1", "pytest>=8.3,<9"]
 
 [tool.uv]
 package = false
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+pythonpath = ["."]

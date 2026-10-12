@@ -6,3 +6,6 @@ __pycache__/
 .huggingface/
 models/
 model-cache/
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo

@@ -1,0 +1,6 @@
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f4f6f8; color: #17212b; font: 16px system-ui, sans-serif; }
+main { width: min(90vw, 560px); padding: 36px; background: white; border: 1px solid #dce2e8; border-radius: 14px; box-shadow: 0 12px 36px #14243412; }
+h1 { margin: 0 0 8px; font-size: 1.65rem; }
+p { margin: 0 0 24px; color: #586574; }
+output { display: block; padding: 14px 16px; border-radius: 8px; background: #edf4f0; color: #17653b; font-weight: 600; }

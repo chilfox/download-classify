@@ -1,22 +1,43 @@
-# Download Classify - readiness setup
+# Download Classify - local readiness baseline
 
-This repository currently contains a model-feasibility check, not the organizer application. The smoke check downloads and runs the real `fastino/gliner2-multi-v1` checkpoint locally; it does not start or depend on an application service. Model weights and document text stay local after the permitted initial checkpoint download.
+The app is a minimal local connectivity baseline, not the organizer. The API health response means only that the API is available; it does not indicate model readiness or document-classification functionality.
 
-## Install the model-check environment
+## Prerequisites
 
-Requires macOS and [uv](https://docs.astral.sh/uv/). Python 3.12 is installed/selected by uv:
+Install [uv](https://docs.astral.sh/uv/) and Node.js/npm. Python 3.12 is managed by uv. From the repository root:
 
 ```sh
 uv python install 3.12
-uv sync --python 3.12
+uv sync --extra test --python 3.12
+(cd frontend && npm ci)
 ```
 
-## Run the real model check
+## Run locally
+
+In separate terminals, from the repository root:
 
 ```sh
-uv run --python 3.12 python scripts/model_smoke.py
+uv run --extra test uvicorn backend.app:app --host 127.0.0.1 --port 8000
 ```
 
-This uses CPU inference and prints raw category candidates/confidences for one Traditional Chinese and one English sample. The first run downloads model weights and may take several minutes. Confidence values are model scores, not calibrated probabilities; do not infer that scores sum to one. The smoke check is deliberately separate from ordinary tests and application startup.
+```sh
+cd frontend && npm run dev
+```
 
-The local environment (`.venv`) and model/cache/runtime artifacts are excluded from version control. Only macOS local setup is in scope; Ubuntu compatibility and fresh-machine reproducibility have not been verified.
+Open http://127.0.0.1:5173. The frontend proxies `/health` to the API at http://127.0.0.1:8000/health. API and frontend bind to loopback only. Stop the API to see the visible connection-error state.
+
+## Baseline checks
+
+```sh
+uv run --extra test pytest
+cd frontend && npm run check && npm run build
+```
+
+These checks do not install, download, or initialize model dependencies or weights. For separate model validation only, install the optional extra and run the documented smoke script:
+
+```sh
+uv sync --extra model-check --python 3.12
+uv run --extra model-check --python 3.12 python scripts/model_smoke.py
+```
+
+The first model check downloads the real checkpoint; see `.scratch/mvp-readiness/spec.md` for the observed model outcome and limitations. Confidence values are not calibrated probabilities. This setup was exercised on the current macOS machine; clean-install reproducibility and Ubuntu compatibility are not claimed.
