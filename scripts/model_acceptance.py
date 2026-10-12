@@ -19,10 +19,11 @@ os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+
+from backend.classification import MIN_GAP, MIN_SCORE, decide_topic
+
 MODEL_ID = "fastino/gliner2-multi-v1"
 REVISION = "ce747d79a8e362d3dee0b0b26d1201f7f1a8615a"
-MIN_SCORE = 0.80
-MIN_GAP = 0.20
 MAX_BYTES = 64 * 1024
 
 
@@ -70,14 +71,12 @@ def main() -> None:
             scores = {item["label"]: item["confidence"] for item in candidates}
             if set(scores) != set(manifest["categories"]):
                 raise ValueError("Model failed to return every candidate score")
-            ranked = sorted(scores.items(), key=lambda item: (-item[1], item[0]))
-            gap = ranked[0][1] - ranked[1][1] if len(ranked) > 1 else None
-            clear = ranked[0][1] >= MIN_SCORE and (gap is None or gap >= MIN_GAP)
+            prediction, gap, clear = decide_topic(scores)
             report["results"].append({
                 **sample, "input_bytes": opening.read_bytes, "encoded_tokens": count,
                 "truncated": prepared.truncated,
-                "scores": scores, "prediction": ranked[0][0], "top_two_gap": gap,
-                "correct": ranked[0][0] == sample["expected"],
+                "scores": scores, "prediction": prediction, "top_two_gap": gap,
+                "correct": prediction == sample["expected"],
                 "would_move": clear, "inference_seconds": elapsed,
             })
         # Probe tokenizer behavior safely without an encoder pass on long text.
