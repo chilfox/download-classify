@@ -10,11 +10,9 @@ import threading
 from pathlib import Path
 from typing import Callable
 
+from backend.classification import decide_topic
 from backend.model_input import read_opening
 from backend.movement import SourceChanged, move_document, open_directory, signature
-
-MIN_SCORE = 0.80
-MIN_GAP = 0.20
 
 
 class Monitor:
@@ -88,7 +86,7 @@ class Monitor:
             if path == self.log_path.absolute():
                 continue
             name = path.name.lower()
-            if name.startswith((".", "~$")) or name.endswith((".crdownload", ".part", ".partial", ".download", ".tmp", ".temp")):
+            if name.startswith("~$") or name.endswith((".crdownload", ".part", ".partial", ".download", ".tmp", ".temp")):
                 continue
             try:
                 info = path.stat(follow_symlinks=False)
@@ -168,10 +166,8 @@ class Monitor:
                 scores, truncated, tokens = self.model.classify(opening, categories)
                 if set(scores) != set(categories) or any(not math.isfinite(score) or not 0 <= score <= 1 for score in scores.values()):
                     raise ValueError("Model must return a finite score in [0, 1] for every configured category")
-                ranked = sorted(scores.items(), key=lambda item: (-item[1], item[0]))
-                gap = ranked[0][1] - ranked[1][1] if len(ranked) > 1 else None
-                clear = ranked[0][1] >= MIN_SCORE and (gap is None or gap >= MIN_GAP)
-                result.update(outcome="suggestion-only", suggestion=ranked[0][0] if clear else "NeedsReview",
+                prediction, gap, clear = decide_topic(scores)
+                result.update(outcome="suggestion-only", suggestion=prediction if clear else "NeedsReview",
                               scores=scores, truncated=truncated, encoded_tokens=tokens, top_two_gap=gap,
                               reason="Opening excerpt only; long-document quality unvalidated. Source untouched." if truncated else "Suggestion only. Source untouched.")
                 if self.mode == "automatic":

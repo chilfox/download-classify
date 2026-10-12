@@ -47,6 +47,38 @@ def test_suggestions_only_fallback_never_touches_sources(tmp_path):
         assert client.get("/results").json() == results
 
 
+@pytest.mark.parametrize("name", [".notes.txt", ".notes.md", ".notes.markdown"])
+def test_new_hidden_documents_move_with_bytes_preserved_but_temporary_downloads_do_not(tmp_path, name):
+    root = tmp_path / "inbox"
+    root.mkdir()
+    content = "Hidden document 隱藏筆記\n".encode("utf-8")
+    existing = root / ".existing.txt"
+    existing.write_bytes(b"baseline document")
+    temporary_names = ["~$draft.txt", ".notes.txt.crdownload", ".notes.txt.part",
+                       ".notes.txt.partial", ".notes.txt.download", ".notes.txt.tmp", ".notes.txt.temp"]
+    with TestClient(create_app(tmp_path / "settings.json", root, Model(), poll_interval=0.01)) as client:
+        assert client.post("/monitor/start").status_code == 200
+        for temporary_name in temporary_names:
+            (root / temporary_name).write_bytes(b"incomplete download")
+        (root / "nested").mkdir()
+        (root / "nested" / name).write_bytes(b"nested document")
+        (root / ".link.txt").symlink_to(root / "nested" / name)
+        (root / name).write_bytes(content)
+        row = wait_for(client, bool)[0]
+        assert row["filename"] == name
+        assert row["outcome"] == "moved"
+        assert row["destination"] == str(root / "Work" / name)
+        assert (root / "Work" / name).read_bytes() == content
+        assert not (root / name).exists()
+        time.sleep(0.1)
+        assert client.get("/results").json() == [row]
+        assert existing.read_bytes() == b"baseline document"
+        for temporary_name in temporary_names:
+            assert (root / temporary_name).read_bytes() == b"incomplete download"
+        assert (root / "nested" / name).read_bytes() == b"nested document"
+        assert (root / ".link.txt").is_symlink()
+
+
 def test_exclusions_dedup_and_restart_baseline(tmp_path):
     root = tmp_path / "inbox"
     root.mkdir()
@@ -55,7 +87,7 @@ def test_exclusions_dedup_and_restart_baseline(tmp_path):
         (root / "nested").mkdir()
         (root / "nested" / "hidden.txt").write_text("nested")
         (root / "link.txt").symlink_to(root / "nested" / "hidden.txt")
-        for name in ["file.txt.crdownload", "file.part", "file.download", "~$draft.txt", ".draft.txt", "draft.txt.tmp"]:
+        for name in ["file.txt.crdownload", "file.part", "file.download", "~$draft.txt", ".draft.txt.part", "draft.txt.tmp"]:
             (root / name).write_text("temporary")
         (root / "new.md").write_text("Research")
         rows = wait_for(client, lambda rows: any(row["filename"] == "new.md" for row in rows))
