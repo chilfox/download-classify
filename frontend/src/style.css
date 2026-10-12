@@ -1,6 +1,22 @@
 * { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f4f6f8; color: #17212b; font: 16px system-ui, sans-serif; }
-main { width: min(90vw, 560px); padding: 36px; background: white; border: 1px solid #dce2e8; border-radius: 14px; box-shadow: 0 12px 36px #14243412; }
-h1 { margin: 0 0 8px; font-size: 1.65rem; }
-p { margin: 0 0 24px; color: #586574; }
-output { display: block; padding: 14px 16px; border-radius: 8px; background: #edf4f0; color: #17653b; font-weight: 600; }
+body { margin: 0; min-height: 100vh; background: #f3f5f2; color: #17221e; font: 15px/1.5 system-ui, sans-serif; }
+main { width: min(92vw, 780px); margin: 54px auto; padding: 42px; background: #fff; border: 1px solid #e0e6df; border-radius: 18px; box-shadow: 0 16px 50px #18271c0b; }
+.eyebrow { color: #38735c; font-size: 11px; font-weight: 750; letter-spacing: .12em; }
+h1 { margin: 4px 0; font-size: 31px; letter-spacing: -.04em; }
+header p, .section-heading p { margin: 0; color: #68736d; }
+form { margin-top: 34px; }
+.section-heading { border-bottom: 1px solid #e9ede9; padding-bottom: 16px; }
+h2 { margin: 0 0 2px; font-size: 18px; }
+.categories { display: grid; gap: 14px; margin: 17px 0 24px; }
+fieldset { display: grid; grid-template-columns: 1fr 1.5fr; gap: 16px; min-width: 0; margin: 0; padding: 17px; border: 1px solid #e1e7e2; border-radius: 11px; }
+label { display: grid; gap: 6px; color: #46534c; font-size: 13px; font-weight: 650; }
+input, textarea { width: 100%; padding: 10px 11px; border: 1px solid #d5ddd6; border-radius: 7px; color: #17221e; font: inherit; font-weight: 400; resize: vertical; }
+input:focus, textarea:focus { outline: 2px solid #a5ceb5; border-color: #50876b; }
+.actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+button { border: 0; border-radius: 8px; background: #246347; color: white; padding: 11px 17px; font: inherit; font-weight: 700; cursor: pointer; }
+button:hover { background: #194d35; }
+button:disabled { opacity: .55; cursor: not-allowed; }
+.status { color: #32654a; font-size: 13px; }
+.status.error { color: #a33b32; }
+footer { margin-top: 30px; padding-top: 18px; border-top: 1px solid #edf0ed; color: #747e78; font-size: 12px; }
+@media (max-width: 600px) { main { margin: 18px auto; padding: 25px 20px; } fieldset { grid-template-columns: 1fr; } }
