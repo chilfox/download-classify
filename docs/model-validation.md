@@ -20,7 +20,7 @@ The checkpoint is `fastino/gliner2-multi-v1`, revision `ce747d79a8e362d3dee0b0b2
 
 Use GLiNER2 multi-label classification with `cls_threshold=0.0`, `class_act="sigmoid"`, no `top_k`, and `include_confidence=True`. Validate one finite score in [0, 1] for every configured category. These independent sigmoid scores do not have to sum to one and are not calibrated probabilities of correctness. Winning-only output is insufficient to compute ambiguity.
 
-`backend/classification.py` shares ranking and fixed decision thresholds between runtime and acceptance: top score >=0.80 and top-two gap >=0.20. A single category still requires the minimum score; no gap is required without a runner-up. NeedsReview is not a model category. Clear results choose one topic; successfully classified uncertain results choose NeedsReview in automatic mode. Processing/model errors remain untouched. Suggestions-only mode never moves files.
+`backend/classification.py` shares ranking and fixed decision thresholds between runtime and acceptance: top score >=0.65 and top-two gap >=0.10. A single category still requires the minimum score; no gap is required without a runner-up. NeedsReview is not a model category. Clear results choose one topic; successfully classified uncertain results choose NeedsReview in automatic mode. Processing/model errors remain untouched. Suggestions-only mode never moves files.
 
 ## Bounded input policy
 
@@ -30,6 +30,6 @@ The user approved automatic topic/NeedsReview movement based on excerpts at the 
 
 ## Evidence and limitations
 
-Saved MVP observations and raw data are in [the model acceptance report](../test-results/download-classify-mvp/model-acceptance.md) and [its JSON](../test-results/download-classify-mvp/model-acceptance.json). These are historical evidence, not automatically refreshed results. See [the complete workflow guide](demo-validation.md) for API/monitor/movement validation.
+Saved MVP observations and raw data are in [the model acceptance report](../test-results/download-classify-mvp/model-acceptance.md) and [its JSON](../test-results/download-classify-mvp/model-acceptance.json). These are historical evidence recorded with a 0.80 minimum score and 0.20 minimum gap, not automatically refreshed results. The current 0.65 minimum score and 0.10 minimum gap were requested by the user; those historical coverage results do not validate the new threshold. See [the complete workflow guide](demo-validation.md) for API/monitor/movement validation.
 
 Report prediction accuracy separately from automatic topic-movement eligibility/coverage. Use independently labeled expected topics; do not count NeedsReview routing as a correct topic prediction. The small synthetic fixture set is not representative production evidence. Do not lower thresholds to hide poor quality. Dependency warnings and failures must be disclosed.

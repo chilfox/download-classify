@@ -91,7 +91,7 @@ export function Monitoring() {
     </>}
     {connectionError && <p className="status error" role="alert">{connectionError}</p>}
     {actionError && <p className="status error" role="alert">{actionError}</p>}
-    <div className="section-heading results-heading"><h2>Current-run results ({results.length})</h2><p>Model scores are independent sigmoid scores, not probabilities of correctness. Fixed thresholds: score 0.80, top-two gap 0.20.</p></div>
+    <div className="section-heading results-heading"><h2>Current-run results ({results.length})</h2><p>Model scores are independent sigmoid scores, not probabilities of correctness. Fixed thresholds: score 0.65, top-two gap 0.10.</p></div>
     {!results.length && <p className="notice">No results yet. Start monitoring, then add a new document. All PDFs are unsupported and stay untouched.</p>}
     <ol className="results">{results.map((result, index) => <li key={index}>
       <div className="result-heading"><strong>{result.filename}</strong><span className={`badge ${result.outcome === 'failed' ? 'failure' : ''}`}>{result.outcome}</span></div>

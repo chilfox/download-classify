@@ -120,8 +120,16 @@ def test_start_loads_model_in_background_once_and_reports_unavailability(tmp_pat
 
 
 @pytest.mark.parametrize("scores, expected", [
-    ({"One": 0.79}, "NeedsReview"), ({"One": 0.80}, "One"),
-    ({"One": 0.9, "Two": 0.8}, "NeedsReview"),
+    ({"One": 0.649999}, "NeedsReview"), ({"One": 0.65}, "One"),
+    ({"One": 0.79}, "One"),
+    ({"One": 0.649999, "Two": 0.1}, "NeedsReview"),
+    ({"One": 0.65, "Two": 0.4}, "One"),
+    ({"One": 0.65, "Two": 0.54}, "One"),
+    ({"One": 0.65, "Two": 0.56}, "NeedsReview"),
+    ({"One": 0.75, "Two": 0.65}, "One"),
+    ({"One": 0.75, "Two": 0.650001}, "NeedsReview"),
+    ({"One": 0.75, "Two": 0.649999}, "One"),
+    ({"One": 0.9, "Two": 0.8}, "One"),
     ({"One": 0.9, "Two": 0.1}, "One"),
     ({"One": 0.8, "Two": 0.6}, "One"),
     ({"One": 0.9, "Two": 0.899}, "NeedsReview"),
