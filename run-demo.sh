@@ -4,6 +4,12 @@ set -Eeuo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
 
+WATCH_FOLDER="$HOME/Desktop/NeedTidy"
+if [[ ! -d "$WATCH_FOLDER" ]]; then
+  printf 'Monitored folder does not exist: %s\nCreate it before running this script.\n' "$WATCH_FOLDER" >&2
+  exit 1
+fi
+
 for command in uv npm; do
   if ! command -v "$command" >/dev/null 2>&1; then
     printf 'Missing required command: %s\nInstall uv and Node.js/npm, then run this script again.\n' "$command" >&2
@@ -27,9 +33,10 @@ if [[ -n "${TMPDIR:-}" ]]; then
 else
   DEMO="$(mktemp -d /tmp/download-classify-demo.XXXXXX)"
 fi
-mkdir "$DEMO/inbox"
-printf 'Disposable demo folder: %s\n' "$DEMO"
-printf 'Documents placed in this inbox may be moved into topic folders.\n' >&2
+printf 'Monitored folder: %s\n' "$WATCH_FOLDER"
+printf 'Temporary settings and movement logs: %s\n' "$DEMO"
+printf 'New documents added after monitoring starts may be moved into topic folders. There is no undo.\n' >&2
+printf 'Files already present when monitoring starts are ignored.\n' >&2
 
 API_PID=''
 FRONTEND_PID=''
@@ -39,13 +46,13 @@ cleanup() {
   [[ -z "$API_PID" ]] || kill "$API_PID" 2>/dev/null || true
   [[ -z "$FRONTEND_PID" ]] || wait "$FRONTEND_PID" 2>/dev/null || true
   [[ -z "$API_PID" ]] || wait "$API_PID" 2>/dev/null || true
-  echo "Services stopped. Demo files are still at: $DEMO"
+  printf 'Services stopped. Documents remain in: %s\nSettings and movement logs remain at: %s\n' "$WATCH_FOLDER" "$DEMO"
 }
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-DOWNLOAD_CLASSIFY_FOLDER="$DEMO/inbox" \
+DOWNLOAD_CLASSIFY_FOLDER="$WATCH_FOLDER" \
 DOWNLOAD_CLASSIFY_SETTINGS_PATH="$DEMO/categories.json" \
 DOWNLOAD_CLASSIFY_MOVEMENT_LOG="$DEMO/movements.jsonl" \
   uv run --extra model-check uvicorn backend.app:app --host 127.0.0.1 --port 8000 --workers 1 &
